@@ -14,7 +14,7 @@ const nftData = [
     title: "Cosmic Nebula #001",
     price: "2.5",
     creator: "ArtistX",
-    image: "/cosmic-digital-art-with-nebula-and-stars.jpg",
+    image: "/design-one.png",
     likes: 234,
     views: 1200,
     category: "Digital Art",
@@ -25,7 +25,7 @@ const nftData = [
     title: "Neon Dreams",
     price: "1.8",
     creator: "CyberArt",
-    image: "/cyberpunk-neon-city.png",
+    image: "/design-one.png",
     likes: 189,
     views: 890,
     category: "Digital Art",
@@ -36,7 +36,7 @@ const nftData = [
     title: "Abstract Geometry",
     price: "3.2",
     creator: "ModernMint",
-    image: "/abstract-geometric-digital-art-colorful.jpg",
+    image: "/design-one.png",
     likes: 156,
     views: 750,
     category: "Abstract",
@@ -47,7 +47,7 @@ const nftData = [
     title: "Future Portrait",
     price: "4.1",
     creator: "DigitalSoul",
-    image: "/futuristic-digital-portrait-art.jpg",
+    image: "/design-one.png",
     likes: 298,
     views: 1450,
     category: "Portrait",
@@ -58,7 +58,7 @@ const nftData = [
     title: "Fractal Dreams",
     price: "2.9",
     creator: "MathArt",
-    image: "/fractal-mathematical-digital-art.jpg",
+    image: "/design-one.png",
     likes: 167,
     views: 820,
     category: "Mathematical",
@@ -69,7 +69,7 @@ const nftData = [
     title: "Digital Landscape",
     price: "1.5",
     creator: "NatureTech",
-    image: "/digital-landscape-mountains-sunset.jpg",
+    image: "/design-one.png",
     likes: 203,
     views: 980,
     category: "Landscape",
@@ -189,7 +189,7 @@ export function ExploreNFTs() {
                   <img
                     src={nft.image || "/placeholder.svg"}
                     alt={nft.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-88 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-2 right-2">
                     <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 text-white">

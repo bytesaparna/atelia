@@ -9,16 +9,9 @@ export const nftCollections = [
   {
     title: "Cosmic Dreamscapes",
     link: "#",
-    thumbnail: "/cosmic-digital-art-with-nebula-and-stars.jpg",
+    thumbnail: "/design-one.png",
     price: "2.5 ETH",
     creator: "AstroArtist",
-  },
-  {
-    title: "Neon Cityscapes",
-    link: "#",
-    thumbnail: "/cyberpunk-neon-city.png",
-    price: "1.8 ETH",
-    creator: "CyberVision",
   },
   {
     title: "Abstract Geometrics",
@@ -26,6 +19,13 @@ export const nftCollections = [
     thumbnail: "/abstract-geometric-digital-art-colorful.jpg",
     price: "3.2 ETH",
     creator: "GeometryMaster",
+  },
+  {
+    title: "Neon Cityscapes",
+    link: "#",
+    thumbnail: "/design-one.png",
+    price: "1.8 ETH",
+    creator: "CyberVision",
   },
   {
     title: "Digital Portraits",
