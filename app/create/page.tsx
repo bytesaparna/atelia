@@ -1,4 +1,4 @@
-import { CreateNFTForm } from "@/components/create-nft-form"
+import { CreateNFTForm } from "@/src/components/create-nft-form"
 
 export default function CreatePage() {
   return (

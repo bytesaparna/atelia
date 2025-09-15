@@ -1,5 +1,5 @@
 "use client"
-import { HeroParallax } from "@/components/ui/hero-parallax"
+import { HeroParallax } from "@/src/components/hero-parallax"
 
 export function NFTMarketplaceHero() {
   return <HeroParallax products={nftCollections} />

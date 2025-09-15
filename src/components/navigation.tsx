@@ -1,9 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/src/components/ui/button"
 import { Wallet, Menu, Search, User } from "lucide-react"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet"
 import { useAppKit, useAppKitAccount } from "@reown/appkit/react"
 
 export function Navigation() {
@@ -28,6 +28,9 @@ export function Navigation() {
       </Link>
       <Link href="/dashboard" className="text-foreground hover:text-cyan-400 transition-colors">
         Dashboard
+      </Link>
+      <Link href="/auction" className="text-foreground hover:text-cyan-400 transition-colors">
+        Auctions
       </Link>
     </>
   )

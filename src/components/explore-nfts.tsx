@@ -1,12 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/src/components/ui/button"
+import { Card, CardContent } from "@/src/components/ui/card"
+import { Input } from "@/src/components/ui/input"
+import { Badge } from "@/src/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { Search, Grid3X3, List, Heart, Eye } from "lucide-react"
+import Link from "next/link"
 
 const nftData = [
   {
@@ -14,7 +15,7 @@ const nftData = [
     title: "Cosmic Nebula #001",
     price: "2.5",
     creator: "ArtistX",
-    image: "/design-one.png",
+    image: "/cosmic-digital-art-with-nebula-and-stars.jpg",
     likes: 234,
     views: 1200,
     category: "Digital Art",
@@ -25,7 +26,7 @@ const nftData = [
     title: "Neon Dreams",
     price: "1.8",
     creator: "CyberArt",
-    image: "/design-one.png",
+    image: "/cyberpunk-neon-city.png",
     likes: 189,
     views: 890,
     category: "Digital Art",
@@ -47,7 +48,7 @@ const nftData = [
     title: "Future Portrait",
     price: "4.1",
     creator: "DigitalSoul",
-    image: "/design-one.png",
+    image: "/futuristic-digital-portrait-art.jpg",
     likes: 298,
     views: 1450,
     category: "Portrait",
@@ -58,7 +59,7 @@ const nftData = [
     title: "Fractal Dreams",
     price: "2.9",
     creator: "MathArt",
-    image: "/design-one.png",
+    image: "/fractal-mathematical-digital-art.jpg",
     likes: 167,
     views: 820,
     category: "Mathematical",
@@ -185,31 +186,33 @@ export function ExploreNFTs() {
               className="group border-border/50 hover:border-cyan-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-400/10"
             >
               <CardContent className="p-0">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <img
-                    src={nft.image || "/placeholder.svg"}
-                    alt={nft.title}
-                    className="w-full h-88 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-2 right-2">
-                    <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 text-white">
-                      <Heart className="h-4 w-4" />
-                    </Button>
+                <Link href={`/nft/${nft.id}`}>
+                  <div className="relative overflow-hidden rounded-t-lg cursor-pointer">
+                    <img
+                      src={nft.image || "/placeholder.svg"}
+                      alt={nft.title}
+                      className="w-full h-88 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute top-2 right-2">
+                      <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 text-white">
+                        <Heart className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {nft.verified && (
+                      <Badge className="absolute top-2 left-2 bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
+                        Verified
+                      </Badge>
+                    )}
                   </div>
-                  {nft.verified && (
-                    <Badge className="absolute top-2 left-2 bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
-                      Verified
-                    </Badge>
-                  )}
-                </div>
+                </Link>
 
                 <div className="p-4 space-y-3">
-                  <div>
-                    <h3 className="font-semibold text-foreground group-hover:text-cyan-400 transition-colors">
+                  <Link href={`/nft/${nft.id}`}>
+                    <h3 className="font-semibold text-foreground group-hover:text-cyan-400 transition-colors cursor-pointer">
                       {nft.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground">by {nft.creator}</p>
-                  </div>
+                  </Link>
+                  <p className="text-sm text-muted-foreground">by {nft.creator}</p>
 
                   <div className="flex items-center justify-between">
                     <div>
@@ -228,9 +231,16 @@ export function ExploreNFTs() {
                     </div>
                   </div>
 
-                  <Button className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600">
-                    Buy Now
-                  </Button>
+                  <div className="flex gap-2">
+                    <Link href={`/nft/${nft.id}`}>
+                      <Button variant="outline" className="flex-1 bg-transparent">
+                        View Details
+                      </Button>
+                    </Link>
+                    <Button className="flex-1 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600">
+                      Buy Now
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -242,17 +252,21 @@ export function ExploreNFTs() {
             <Card key={nft.id} className="border-border/50 hover:border-cyan-400/50 transition-all duration-300">
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
-                  <img
-                    src={nft.image || "/placeholder.svg"}
-                    alt={nft.title}
-                    className="w-16 h-16 object-cover rounded-lg"
-                  />
+                  <Link href={`/nft/${nft.id}`}>
+                    <img
+                      src={nft.image || "/placeholder.svg"}
+                      alt={nft.title}
+                      className="w-16 h-16 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                    />
+                  </Link>
                   <div className="flex-1">
                     <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="font-semibold text-foreground hover:text-cyan-400 transition-colors">
-                          {nft.title}
-                        </h3>
+                        <Link href={`/nft/${nft.id}`}>
+                          <h3 className="font-semibold text-foreground hover:text-cyan-400 transition-colors cursor-pointer">
+                            {nft.title}
+                          </h3>
+                        </Link>
                         <p className="text-sm text-muted-foreground">by {nft.creator}</p>
                         <Badge variant="secondary" className="mt-1 text-xs">
                           {nft.category}
@@ -273,9 +287,16 @@ export function ExploreNFTs() {
                       </div>
                     </div>
                   </div>
-                  <Button className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600">
-                    Buy Now
-                  </Button>
+                  <div className="flex gap-2">
+                    <Link href={`/nft/${nft.id}`}>
+                      <Button variant="outline" className="bg-transparent">
+                        View Details
+                      </Button>
+                    </Link>
+                    <Button className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600">
+                      Buy Now
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

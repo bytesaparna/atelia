@@ -14,7 +14,7 @@ export const networks = [mainnet, arbitrum]
 //Set up the Wagmi Adapter (Config)
 export const wagmiAdapter = new WagmiAdapter({
     storage: createStorage({
-        storage: cookieStorage
+        storage: cookieStorage,
     }),
     ssr: true,
     projectId,

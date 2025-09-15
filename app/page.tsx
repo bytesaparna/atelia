@@ -1,8 +1,8 @@
-import { NFTMarketplaceHero } from "@/components/nft-marketplace-hero"
-import { HowItWorks } from "@/components/how-it-works"
-import { Features } from "@/components/features"
-import { Stats } from "@/components/stats"
-import { Footer } from "@/components/footer"
+import { NFTMarketplaceHero } from "@/src/components/nft-marketplace-hero"
+import { HowItWorks } from "@/src/components/how-it-works"
+import { Features } from "@/src/components/features"
+import { Stats } from "@/src/components/stats"
+import { Footer } from "@/src/components/footer"
 
 export default function Home() {
   return (

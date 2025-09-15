@@ -1,7 +1,9 @@
 "use client"
 import React from "react"
 import { motion, useScroll, useTransform, useSpring, type MotionValue } from "motion/react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/src/components/ui/button"
+import { cn } from "@/src/lib/utils"
+import { useRouter } from "next/navigation"
 
 export const HeroParallax = ({
   products,
@@ -48,17 +50,17 @@ export const HeroParallax = ({
       >
         <motion.div className="flex flex-row-reverse space-x-reverse space-x-20 mb-20">
           {firstRow.map((product) => (
-            <NFTCard product={product} translate={translateX} key={product.title} />
+            <NFTCard product={product} translate={translateX} />
           ))}
         </motion.div>
         <motion.div className="flex flex-row mb-20 space-x-20">
           {secondRow.map((product) => (
-            <NFTCard product={product} translate={translateXReverse} key={product.title} />
+            <NFTCard product={product} translate={translateXReverse} />
           ))}
         </motion.div>
         <motion.div className="flex flex-row-reverse space-x-reverse space-x-20">
           {thirdRow.map((product) => (
-            <NFTCard product={product} translate={translateX} key={product.title} />
+            <NFTCard product={product} translate={translateX} />
           ))}
         </motion.div>
       </motion.div>
@@ -67,6 +69,13 @@ export const HeroParallax = ({
 }
 
 export const Header = () => {
+  const router = useRouter()
+  const handleExplore = () => {
+    router.push('/explore')
+  }
+  const handleCreateNFT =()=>{
+    router.push('/create')
+  }
   return (
     <div className="max-w-7xl relative mx-auto py-20 md:py-40 px-4 w-full left-0 top-0">
       <h1 className="text-2xl md:text-7xl font-bold text-foreground text-balance">
@@ -78,10 +87,10 @@ export const Header = () => {
         artists and creators worldwide.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 mt-8">
-        <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+        <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground" onClick={handleExplore}>
           Explore Collections
         </Button>
-        <Button size="lg" variant="outline" className="border-border text-foreground hover:bg-accent bg-transparent">
+        <Button size="lg" variant="outline" className="border-border text-foreground hover:bg-accent bg-transparent" onClick={handleCreateNFT}>
           Create NFT
         </Button>
       </div>
@@ -113,27 +122,47 @@ export const NFTCard = ({
       key={product.title}
       className="group/product h-96 w-[30rem] relative shrink-0"
     >
-      <a href={product.link} className="block group-hover/product:shadow-2xl">
-        <img
-          src={product.thumbnail || "/placeholder.svg"}
-          height="600"
-          width="600"
-          className="object-cover object-center absolute h-full w-full inset-0 rounded-lg"
-          alt={product.title}
-        />
-      </a>
-      <div className="absolute inset-0 h-full w-full opacity-0 group-hover/product:opacity-90 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none rounded-lg transition-opacity duration-300"></div>
-      <div className="absolute bottom-0 left-0 right-0 p-6 opacity-0 group-hover/product:opacity-100 transition-opacity duration-300">
-        <h2 className="text-white font-semibold text-lg mb-2">{product.title}</h2>
-        {product.creator && <p className="text-gray-300 text-sm mb-2">by {product.creator}</p>}
-        {product.price && (
-          <div className="flex items-center justify-between">
-            <span className="text-primary font-bold text-lg">{product.price}</span>
-            <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              Buy Now
-            </Button>
+      <div
+        className={cn(
+          "cursor-pointer overflow-hidden relative card h-full w-full rounded-xl shadow-xl backgroundImage flex flex-col justify-between p-6",
+          "bg-cover bg-center transition-all duration-300 group-hover/product:shadow-2xl group-hover/product:scale-[1.02]",
+        )}
+        style={{
+          backgroundImage: `url(${product.thumbnail || "/placeholder.svg"})`,
+        }}
+      >
+        {product.creator && (
+          <div className="flex flex-row items-center space-x-3 z-10 opacity-0 group-hover/product:opacity-100 transition-opacity duration-300">
+            <div className="h-10 w-10 rounded-full bg-gradient-to-r from-cyan-400 to-emerald-400 flex items-center justify-center">
+              <span className="text-white font-semibold text-sm">{product.creator.charAt(0).toUpperCase()}</span>
+            </div>
+            <div className="flex flex-col">
+              <p className="font-medium text-base text-white relative z-10">{product.creator}</p>
+              <p className="text-sm text-gray-300">Creator</p>
+            </div>
           </div>
         )}
+
+        <div className="text-content z-10">
+          <h1 className="font-bold text-xl md:text-2xl text-white relative z-10 mb-2 group-hover/product:text-cyan-100 transition-colors">
+            {product.title}
+          </h1>
+
+          {product.price && (
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                <span className="text-gray-300 text-sm">Current Price</span>
+                <span className="text-cyan-400 font-bold text-xl">{product.price}</span>
+              </div>
+              <Button
+                size="sm"
+                className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white border-0 shadow-lg opacity-0 group-hover/product:opacity-100 transition-all duration-300 transform translate-y-2 group-hover/product:translate-y-0"
+              >
+                Buy Now
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     </motion.div>
   )

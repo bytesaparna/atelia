@@ -1,4 +1,4 @@
-import { ExploreNFTs } from "@/components/explore-nfts"
+import { ExploreNFTs } from "@/src/components/explore-nfts"
 
 export default function ExplorePage() {
   return (

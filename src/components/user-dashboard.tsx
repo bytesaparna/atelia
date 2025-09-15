@@ -1,12 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Progress } from "@/components/ui/progress"
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
+import { Button } from "@/src/components/ui/button"
+import { Badge } from "@/src/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
+import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
+import { Progress } from "@/src/components/ui/progress"
 import { Eye, Heart, Plus, Edit3, Share2, MoreHorizontal, Calendar, Award, Users, DollarSign } from "lucide-react"
 import {
   LineChart,
@@ -224,7 +224,7 @@ export function UserDashboard() {
                 <CardTitle className="text-foreground">Earnings Over Time</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
+                <ResponsiveContainer width="100%" height={300} children={
                   <LineChart data={earningsData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="month" stroke="#9ca3af" />
@@ -244,6 +244,7 @@ export function UserDashboard() {
                       dot={{ fill: "#06b6d4", strokeWidth: 2, r: 4 }}
                     />
                   </LineChart>
+                }>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
@@ -253,7 +254,7 @@ export function UserDashboard() {
                 <CardTitle className="text-foreground">NFT Categories</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
+                <ResponsiveContainer width="100%" height={300} children={
                   <PieChart>
                     <Pie
                       data={categoryData}
@@ -276,6 +277,7 @@ export function UserDashboard() {
                       }}
                     />
                   </PieChart>
+                }>
                 </ResponsiveContainer>
                 <div className="flex flex-wrap gap-4 mt-4">
                   {categoryData.map((category, index) => (
@@ -310,13 +312,12 @@ export function UserDashboard() {
                       className="w-full h-48 object-cover rounded-t-lg"
                     />
                     <Badge
-                      className={`absolute top-2 right-2 ${
-                        nft.status === "listed"
+                      className={`absolute top-2 right-2 ${nft.status === "listed"
                           ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
                           : nft.status === "sold"
                             ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
                             : "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
-                      }`}
+                        }`}
                     >
                       {nft.status}
                     </Badge>
@@ -369,7 +370,7 @@ export function UserDashboard() {
                 <CardTitle className="text-foreground">Monthly Views</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
+                <ResponsiveContainer width="100%" height={300} children={
                   <BarChart data={earningsData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="month" stroke="#9ca3af" />
@@ -383,6 +384,7 @@ export function UserDashboard() {
                     />
                     <Bar dataKey="earnings" fill="#10b981" radius={[4, 4, 0, 0]} />
                   </BarChart>
+                }>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
@@ -440,15 +442,14 @@ export function UserDashboard() {
                     className="flex items-start gap-4 pb-4 border-b border-border/50 last:border-b-0 last:pb-0"
                   >
                     <div
-                      className={`p-2 rounded-full ${
-                        activity.type === "sale"
+                      className={`p-2 rounded-full ${activity.type === "sale"
                           ? "bg-emerald-500/20"
                           : activity.type === "like"
                             ? "bg-red-500/20"
                             : activity.type === "follow"
                               ? "bg-blue-500/20"
                               : "bg-purple-500/20"
-                      }`}
+                        }`}
                     >
                       {activity.type === "sale" && <DollarSign className="h-4 w-4 text-emerald-400" />}
                       {activity.type === "like" && <Heart className="h-4 w-4 text-red-400" />}

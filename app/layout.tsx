@@ -4,10 +4,11 @@ import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
-import { Navigation } from "@/components/navigation"
+import { Navigation } from "@/src/components/navigation"
 import "./globals.css"
-import ContextProvider from "@/context"
 import { headers } from "next/headers"
+import ContextProvider from "context"
+// import ContextProvider from "context"
 
 export const metadata: Metadata = {
   title: "CryptoVault - NFT Marketplace",
@@ -28,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        <ContextProvider cookies={cookies}>
+        <ContextProvider cookies={cookies} children={children}>
           <Navigation />
           <Suspense fallback={null}>
             {children}
