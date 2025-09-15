@@ -1,26 +1,19 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Wallet, Menu, Search, User } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { useAppKit, useAppKitAccount } from "@reown/appkit/react"
 
 export function Navigation() {
-  const [isConnected, setIsConnected] = useState(false)
-  const [walletAddress, setWalletAddress] = useState("")
+  const { open } = useAppKit()
+  const { isConnected, address } = useAppKitAccount()
+  // Shorten wallet address for display
+  const shortAddress = address
+    ? `${address.slice(0, 6)}...${address.slice(-4)}`
+    : "";
 
-  const connectWallet = async () => {
-    // Simulate wallet connection
-    setIsConnected(true)
-    setWalletAddress("0x742d...4A2f")
-  }
-
-  const disconnectWallet = () => {
-    setIsConnected(false)
-    setWalletAddress("")
-  }
 
   const NavLinks = () => (
     <>
@@ -60,18 +53,16 @@ export function Navigation() {
           </Button>
 
           {isConnected ? (
-            <div className="flex items-center space-x-2">
-              <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
-                <Wallet className="h-3 w-3 mr-1" />
-                {walletAddress}
-              </Badge>
-              <Button variant="ghost" size="icon" onClick={disconnectWallet}>
-                <User className="h-4 w-4" />
-              </Button>
-            </div>
+            <Button
+              onClick={() => open()}
+              className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white font-medium"
+            >
+              <Wallet className="h-4 w-4 mr-2" />
+              {shortAddress}
+            </Button>
           ) : (
             <Button
-              onClick={connectWallet}
+              onClick={() => open()}
               className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white font-medium"
             >
               <Wallet className="h-4 w-4 mr-2" />
@@ -95,21 +86,16 @@ export function Navigation() {
 
               <div className="border-t border-border pt-6">
                 {isConnected ? (
-                  <div className="space-y-4">
-                    <Badge
-                      variant="secondary"
-                      className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 w-full justify-center"
-                    >
-                      <Wallet className="h-3 w-3 mr-1" />
-                      {walletAddress}
-                    </Badge>
-                    <Button variant="outline" onClick={disconnectWallet} className="w-full bg-transparent">
-                      Disconnect
-                    </Button>
-                  </div>
+                  <Button
+                    onClick={() => open()}
+                    className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white font-medium"
+                  >
+                    <Wallet className="h-4 w-4 mr-2" />
+                    {shortAddress}
+                  </Button>
                 ) : (
                   <Button
-                    onClick={connectWallet}
+                    onClick={() => open()}
                     className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white font-medium"
                   >
                     <Wallet className="h-4 w-4 mr-2" />
