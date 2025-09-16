@@ -73,7 +73,7 @@ export const Header = () => {
   const handleExplore = () => {
     router.push('/explore')
   }
-  const handleCreateNFT =()=>{
+  const handleCreateNFT = () => {
     router.push('/create')
   }
   return (
@@ -87,10 +87,10 @@ export const Header = () => {
         artists and creators worldwide.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 mt-8">
-        <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground" onClick={handleExplore}>
+        <Button size="lg" className=" bg-primary hover:bg-primary/90 text-primary-foreground opacity-60 z-50" onClick={handleExplore}>
           Explore Collections
         </Button>
-        <Button size="lg" variant="outline" className="border-border text-foreground hover:bg-accent bg-transparent" onClick={handleCreateNFT}>
+        <Button size="lg" variant="outline" className=" !border-white/20 border-1 text-foreground hover:bg-accent !bg-transparent opacity-60 z-50" onClick={handleCreateNFT}>
           Create NFT
         </Button>
       </div>
