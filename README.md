@@ -69,6 +69,10 @@ Atelia strives to democratize the creative economy by making design ownership, i
 
 ---
 
+
+## Contract Setup
+I have used `andromeda solidity` contracts to create the full backend for this app. You can find the deployment script in ![Atelio Deploy Script](docs/HackathonDeploy.s.sol).
+
 ## 📈 Roadmap
 
 - Support for physical design assets (RWA)
