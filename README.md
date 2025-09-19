@@ -87,10 +87,14 @@ Atelia strives to democratize the creative economy by making design ownership, i
 ## 📎 Demo Links
 
 - [GitHub Repository](https://github.com/bytesaparna/atelia)
-- [Demo/Deployed App](https://drive.google.com/drive/folders/1TH78grEf4oFpjf1alpyHZyNejcM0eyow)
+- [Video](https://drive.google.com/drive/folders/1TH78grEf4oFpjf1alpyHZyNejcM0eyow)
+- [Demo/Deployed App](https://atelia.vercel.app/)
+
 
 ---
 
+## Owner wallet address (In case one wants to check transactions)
+`0xA6D02F2a4e6DBA17dc390F14e96398b4b491b249`
 
 
 Atelia: Unleashing global creativity, one NFT at a time.
