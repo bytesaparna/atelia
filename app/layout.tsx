@@ -8,12 +8,14 @@ import { Navigation } from "@/src/components/navigation"
 import "./globals.css"
 import { headers } from "next/headers"
 import ContextProvider from "context"
-// import ContextProvider from "context"
 
 export const metadata: Metadata = {
-  title: "CryptoVault - NFT Marketplace",
+  title: "Atelia",
   description: "Discover, collect, and trade unique digital assets",
   generator: "v0.app",
+  icons : {
+    icon : "/fractal-mathematical-digital-art.jpg"
+  }
 }
 
 export default function RootLayout({
@@ -29,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        <ContextProvider cookies={cookies} children={children}>
+        <ContextProvider cookies={cookies}>
           <Navigation />
           <Suspense fallback={null}>
             {children}

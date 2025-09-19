@@ -1,0 +1,42 @@
+{
+    "name": "Scarlet Flame Gown",
+    "image": "/design-seven.png",
+    "attributes": [
+        {
+            "trait_type": "Collection",
+            "value": "Red Royale"
+        },
+        {
+            "trait_type": "Category",
+            "value": "Evening Wear"
+        },
+        {
+            "trait_type": "Color",
+            "value": "Crimson Red"
+        },
+        {
+            "trait_type": "Material",
+            "value": "Velvet & Silk"
+        },
+        {
+            "trait_type": "Style",
+            "value": "Mermaid Fit, Strapless"
+        },
+        {
+            "trait_type": "Unique Features",
+            "value": "Golden embroidery, Dramatic flare"
+        },
+        {
+            "trait_type": "Designer",
+            "value": "Elena Marquez"
+        },
+        {
+            "trait_type": "Platform",
+            "value": "Atelia"
+        },
+        {
+            "trait_type": "Rarity",
+            "value": "Signature Piece"
+        }
+    ]
+}

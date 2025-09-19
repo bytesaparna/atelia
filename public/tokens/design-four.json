@@ -1,0 +1,42 @@
+{
+    "name": "Fractal Flow Dress",
+    "image": "/design-four.png",
+    "attributes": [
+        {
+            "trait_type": "Collection",
+            "value": "Mathematical Dreams"
+        },
+        {
+            "trait_type": "Category",
+            "value": "Conceptual Fashion"
+        },
+        {
+            "trait_type": "Color",
+            "value": "Emerald Green"
+        },
+        {
+            "trait_type": "Material",
+            "value": "Digital Print Satin"
+        },
+        {
+            "trait_type": "Style",
+            "value": "Asymmetrical Cut"
+        },
+        {
+            "trait_type": "Unique Features",
+            "value": "Fractal-inspired print, High slit"
+        },
+        {
+            "trait_type": "Designer",
+            "value": "Ritika Shah"
+        },
+        {
+            "trait_type": "Platform",
+            "value": "Atelia"
+        },
+        {
+            "trait_type": "Rarity",
+            "value": "Rare Design"
+        }
+    ]
+}

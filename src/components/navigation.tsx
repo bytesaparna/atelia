@@ -40,8 +40,9 @@ export function Navigation() {
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-cyan-400 to-emerald-400" />
-          <span className="text-xl font-bold text-foreground">CryptoVault</span>
+          {/* <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-cyan-400 to-emerald-400" /> */}
+          <img src="/fractal-mathematical-digital-art.jpg" width={30} height={30} className="rounded-2xl"></img>
+          <span className="text-xl font-bold text-foreground">Atelia</span>
         </Link>
 
         {/* Desktop Navigation */}

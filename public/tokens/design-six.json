@@ -1,0 +1,42 @@
+{
+    "name": "Hologram Luxe Dress",
+    "image": "/design-six.png",
+    "attributes": [
+        {
+            "trait_type": "Collection",
+            "value": "Future Couture"
+        },
+        {
+            "trait_type": "Category",
+            "value": "Avant-Garde"
+        },
+        {
+            "trait_type": "Color",
+            "value": "Iridescent Silver"
+        },
+        {
+            "trait_type": "Material",
+            "value": "Holographic Fabric"
+        },
+        {
+            "trait_type": "Style",
+            "value": "Futuristic A-Line"
+        },
+        {
+            "trait_type": "Unique Features",
+            "value": "Light-reflective finish, Minimal seams"
+        },
+        {
+            "trait_type": "Designer",
+            "value": "Naoko Tanaka"
+        },
+        {
+            "trait_type": "Platform",
+            "value": "Atelia"
+        },
+        {
+            "trait_type": "Rarity",
+            "value": "Ultra Rare"
+        }
+    ]
+}

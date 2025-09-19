@@ -1,0 +1,42 @@
+{
+    "name": "Crystal Bloom Gown",
+    "image": "/design-three.png",
+    "attributes": [
+        {
+            "trait_type": "Collection",
+            "value": "Royal Blossoms"
+        },
+        {
+            "trait_type": "Category",
+            "value": "Couture"
+        },
+        {
+            "trait_type": "Color",
+            "value": "Ivory White with Crystal Accents"
+        },
+        {
+            "trait_type": "Material",
+            "value": "Organza & Tulle"
+        },
+        {
+            "trait_type": "Style",
+            "value": "Ball Gown, Sweetheart Neckline"
+        },
+        {
+            "trait_type": "Unique Features",
+            "value": "Crystal embroidery, Layered skirt"
+        },
+        {
+            "trait_type": "Designer",
+            "value": "Sophia Lark"
+        },
+        {
+            "trait_type": "Platform",
+            "value": "Atelia"
+        },
+        {
+            "trait_type": "Rarity",
+            "value": "Collector’s Edition"
+        }
+    ]
+}

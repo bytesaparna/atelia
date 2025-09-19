@@ -1,0 +1,42 @@
+{
+    "name": "Golden Horizon Dress",
+    "image": "/design-five.png",
+    "attributes": [
+        {
+            "trait_type": "Collection",
+            "value": "Sunset Series"
+        },
+        {
+            "trait_type": "Category",
+            "value": "Resort Wear"
+        },
+        {
+            "trait_type": "Color",
+            "value": "Gold & Orange Gradient"
+        },
+        {
+            "trait_type": "Material",
+            "value": "Chiffon"
+        },
+        {
+            "trait_type": "Style",
+            "value": "Flowy, One-Shoulder"
+        },
+        {
+            "trait_type": "Unique Features",
+            "value": "Gradient dye, Lightweight feel"
+        },
+        {
+            "trait_type": "Designer",
+            "value": "Miguel Torres"
+        },
+        {
+            "trait_type": "Platform",
+            "value": "Atelia"
+        },
+        {
+            "trait_type": "Rarity",
+            "value": "Limited Run"
+        }
+    ]
+}
