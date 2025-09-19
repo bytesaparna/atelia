@@ -7,12 +7,23 @@ Atelia is a decentralized design exchange platform that empowers designers and c
 ## 🚀 Overview
 
 ![Atelia Home](public/atelia-home.png)
+
+
 - **NFT Minting:** Designers mint original works as NFTs, securing provenance and global exposure.
+
 ![Atelia Create](public/atelia-create.png)
+
+
 - **Exchange & Fractional Ownership:** Designs are listed on an exchange, enabling users to invest in fractional shares.
+
 ![Atelia Shares](public/atelia-shares.png)
+
+
 - **Auctions for Brands:** Popular designs are promoted to auctions, where top brands can bid for exclusive ownership.
+
 ![Atelia Auction](public/atelia-auction.png)
+
+
 - **Community & DAO:** Governance and platform evolution are guided by the community through DAO mechanisms.
 - **Security & Transparency:** All transactions are on-chain, ensuring trust and immutability.
 - **Rewards & Revenue Sharing:** Revenue is distributed among creators, investors, and the platform.
