@@ -3,9 +3,9 @@
 import { wagmiAdapter, projectId } from 'config'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createAppKit } from '@reown/appkit/react'
-import { mainnet, arbitrum } from '@reown/appkit/networks'
 import React, { type ReactNode } from 'react'
 import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
+import { somniaChain } from '@/src/lib/chains'
 
 // Set up queryClient
 const queryClient = new QueryClient()
@@ -26,11 +26,16 @@ const metadata = {
 const modal = createAppKit({
     adapters: [wagmiAdapter],
     projectId,
-    networks: [mainnet, arbitrum],
-    defaultNetwork: mainnet,
+    networks: [somniaChain],
+    defaultNetwork: somniaChain,
     metadata: metadata,
     features: {
         analytics: true // Optional - defaults to your Cloud configuration
+    },
+    customRpcUrls: {
+        [somniaChain.caipNetworkId]: [{
+            url: somniaChain.rpcUrls.default.http[0],
+        }]
     }
 })
 

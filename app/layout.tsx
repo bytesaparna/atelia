@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        <ContextProvider cookies={cookies}>
+        <ContextProvider cookies={cookies} children={children}>
           <Navigation />
           <Suspense fallback={null}>
             {children}

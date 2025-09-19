@@ -4,17 +4,12 @@ import { motion, useScroll, useTransform, useSpring, type MotionValue } from "mo
 import { Button } from "@/src/components/ui/button"
 import { cn } from "@/src/lib/utils"
 import { useRouter } from "next/navigation"
+import { NftCollection } from "../lib/app-utils"
 
 export const HeroParallax = ({
   products,
 }: {
-  products: {
-    title: string
-    link: string
-    thumbnail: string
-    price?: string
-    creator?: string
-  }[]
+  products: NftCollection[]
 }) => {
   const firstRow = products.slice(0, 5)
   const secondRow = products.slice(5, 10)
@@ -105,13 +100,7 @@ export const NFTCard = ({
   product,
   translate,
 }: {
-  product: {
-    title: string
-    link: string
-    thumbnail: string
-    price?: string
-    creator?: string
-  }
+  product: NftCollection
   translate: MotionValue<number>
 }) => {
   return (
@@ -137,10 +126,10 @@ export const NFTCard = ({
         {product.creator && (
           <div className="flex flex-row items-center space-x-3 z-10 opacity-0 group-hover/product:opacity-100 transition-opacity duration-300">
             <div className="h-10 w-10 rounded-full bg-gradient-to-r from-cyan-400 to-emerald-400 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">{product.creator.charAt(0).toUpperCase()}</span>
+              <span className="text-white font-semibold text-sm">A</span>
             </div>
             <div className="flex flex-col">
-              <p className="font-medium text-base text-white relative z-10">{product.creator}</p>
+              <p className="font-medium text-base text-black relative z-10">{product.creator.substring(0, 6)}...</p>
               <p className="text-sm text-gray-300">Creator</p>
             </div>
           </div>
@@ -155,7 +144,7 @@ export const NFTCard = ({
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <span className="text-gray-300 text-sm">Current Price</span>
-                <span className="text-cyan-400 font-bold text-xl">{product.price}</span>
+                <span className="text-cyan-400 font-bold text-xl">{product.price} STT</span>
               </div>
               <Button
                 size="sm"
