@@ -30,8 +30,8 @@ export function HowItWorks() {
       step: "04",
     },
   ];
-  
- 
+
+
 
   return (
     <section className="py-24 px-4 bg-gradient-to-b from-background to-slate-900/20">
@@ -53,7 +53,7 @@ export function HowItWorks() {
           </p>
         </motion.div>
         <div className="flex justify-between px-35">
-          <div className="grid grid-rows-1 md:grid-rows-2 lg:grid-rows-4 gap-8">
+          <div className="grid grid-rows-1 md:grid-rows-2 lg:grid-rows-4 gap-14 mt-8">
             {steps.map((step, index) => (
               <motion.div
                 key={step.title}
@@ -63,7 +63,7 @@ export function HowItWorks() {
                 viewport={{ once: true }}
                 className="relative group max-w-lg"
               >
-                <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-8 h-full hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10">
+                <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10">
                   <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
                     {step.step}
                   </div>
@@ -71,12 +71,26 @@ export function HowItWorks() {
                     <step.icon className="w-8 h-8 text-cyan-400" />
                   </div>
                   <h3 className="text-xl font-semibold text-white mb-4">{step.title}</h3>
-                  {/* <p className="text-slate-300 leading-relaxed">{step.description}</p> */}
                 </div>
               </motion.div>
             ))}
           </div>
-          
+          <div className="grid grid-rows-1 md:grid-rows-2 lg:grid-rows-4 gap-14">
+            {steps.map((step, index) => (
+              <motion.div
+                key={step.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="relative group max-w-lg"
+              >
+                <div className="backdrop-blur-sm rounded-2xl p-8 h-full hover:border-cyan-500/50 transition-all duration-300 shadow-lg shadow-cyan-500/10">
+                  <p className="text-slate-300 leading-relaxed">{step.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -2,6 +2,7 @@
     "name": "Midnight Elegance Gown",
     "description": "A stunning evening gown with a deep navy blue color, flowing train, and hand-embroidered sequins.",
     "image": "https://atelia.vercel.app/design-one.png",
+    "external_url": "https://atelia.vercel.app/nft/1",
     "attributes": [
         {
             "trait_type": "collection",

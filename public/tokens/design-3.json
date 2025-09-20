@@ -2,6 +2,7 @@
     "name": "Crystal Bloom Gown",
     "description": "An ivory couture ball gown with crystal embroidery, organza and tulle layers, and a sweetheart neckline.",
     "image": "https://atelia.vercel.app/design-three.png",
+    "external_url": "https://atelia.vercel.app/nft/3",
     "attributes": [
         {
             "trait_type": "collection",

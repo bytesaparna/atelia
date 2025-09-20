@@ -2,6 +2,7 @@
     "name": "Emerald Monarch Gown",
     "description": "An opulent emerald velvet gown with gold embroidery, regal cape, and fitted silhouette.",
     "image": "https://atelia.vercel.app/design-thirteen.png",
+    "external_url": "https://atelia.vercel.app/nft/13",
     "attributes": [
         {
             "trait_type": "collection",
