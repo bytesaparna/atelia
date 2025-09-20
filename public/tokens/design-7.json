@@ -1,41 +1,42 @@
 {
     "name": "Scarlet Flame Gown",
+    "description": "A strapless mermaid gown in rich crimson velvet and silk with golden embroidery and dramatic flare.",
     "image": "/design-seven.png",
     "attributes": [
         {
-            "trait_type": "Collection",
+            "trait_type": "collection",
             "value": "Red Royale"
         },
         {
-            "trait_type": "Category",
+            "trait_type": "category",
             "value": "Evening Wear"
         },
         {
-            "trait_type": "Color",
+            "trait_type": "color",
             "value": "Crimson Red"
         },
         {
-            "trait_type": "Material",
+            "trait_type": "material",
             "value": "Velvet & Silk"
         },
         {
-            "trait_type": "Style",
+            "trait_type": "style",
             "value": "Mermaid Fit, Strapless"
         },
         {
-            "trait_type": "Unique Features",
+            "trait_type": "unique features",
             "value": "Golden embroidery, Dramatic flare"
         },
         {
-            "trait_type": "Designer",
+            "trait_type": "designer",
             "value": "Elena Marquez"
         },
         {
-            "trait_type": "Platform",
+            "trait_type": "platform",
             "value": "Atelia"
         },
         {
-            "trait_type": "Rarity",
+            "trait_type": "rarity",
             "value": "Signature Piece"
         }
     ]

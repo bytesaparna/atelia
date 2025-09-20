@@ -1,41 +1,42 @@
 {
     "name": "Hologram Luxe Dress",
+    "description": "A futuristic A-line made from holographic fabric with an iridescent, light-reflective finish.",
     "image": "/design-six.png",
     "attributes": [
         {
-            "trait_type": "Collection",
+            "trait_type": "collection",
             "value": "Future Couture"
         },
         {
-            "trait_type": "Category",
+            "trait_type": "category",
             "value": "Avant-Garde"
         },
         {
-            "trait_type": "Color",
+            "trait_type": "color",
             "value": "Iridescent Silver"
         },
         {
-            "trait_type": "Material",
+            "trait_type": "material",
             "value": "Holographic Fabric"
         },
         {
-            "trait_type": "Style",
+            "trait_type": "style",
             "value": "Futuristic A-Line"
         },
         {
-            "trait_type": "Unique Features",
+            "trait_type": "unique features",
             "value": "Light-reflective finish, Minimal seams"
         },
         {
-            "trait_type": "Designer",
+            "trait_type": "designer",
             "value": "Naoko Tanaka"
         },
         {
-            "trait_type": "Platform",
+            "trait_type": "platform",
             "value": "Atelia"
         },
         {
-            "trait_type": "Rarity",
+            "trait_type": "rarity",
             "value": "Ultra Rare"
         }
     ]

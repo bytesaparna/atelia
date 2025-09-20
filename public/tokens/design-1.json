@@ -1,41 +1,42 @@
 {
     "name": "Midnight Elegance Gown",
+    "description": "A stunning evening gown with a deep navy blue color, flowing train, and hand-embroidered sequins.",
     "image": "/design-one.png",
     "attributes": [
         {
-            "trait_type": "Collection",
+            "trait_type": "collection",
             "value": "Evening Elegance"
         },
         {
-            "trait_type": "Category",
+            "trait_type": "category",
             "value": "Evening Wear"
         },
         {
-            "trait_type": "Color",
+            "trait_type": "color",
             "value": "Deep Navy Blue"
         },
         {
-            "trait_type": "Material",
+            "trait_type": "material",
             "value": "Silk & Satin Blend"
         },
         {
-            "trait_type": "Style",
+            "trait_type": "style",
             "value": "Floor-Length, Off-Shoulder"
         },
         {
-            "trait_type": "Unique Features",
+            "trait_type": "unique features",
             "value": "Hand-embroidered sequins, Flowing train"
         },
         {
-            "trait_type": "Designer",
+            "trait_type": "designer",
             "value": "Ariana D'Souza"
         },
         {
-            "trait_type": "Platform",
+            "trait_type": "platform",
             "value": "Atelia"
         },
         {
-            "trait_type": "Rarity",
+            "trait_type": "rarity",
             "value": "Limited Edition"
         }
     ]

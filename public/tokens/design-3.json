@@ -1,41 +1,42 @@
 {
     "name": "Crystal Bloom Gown",
+    "description": "An ivory couture ball gown with crystal embroidery, organza and tulle layers, and a sweetheart neckline.",
     "image": "/design-three.png",
     "attributes": [
         {
-            "trait_type": "Collection",
+            "trait_type": "collection",
             "value": "Royal Blossoms"
         },
         {
-            "trait_type": "Category",
+            "trait_type": "category",
             "value": "Couture"
         },
         {
-            "trait_type": "Color",
+            "trait_type": "color",
             "value": "Ivory White with Crystal Accents"
         },
         {
-            "trait_type": "Material",
+            "trait_type": "material",
             "value": "Organza & Tulle"
         },
         {
-            "trait_type": "Style",
+            "trait_type": "style",
             "value": "Ball Gown, Sweetheart Neckline"
         },
         {
-            "trait_type": "Unique Features",
+            "trait_type": "unique features",
             "value": "Crystal embroidery, Layered skirt"
         },
         {
-            "trait_type": "Designer",
+            "trait_type": "designer",
             "value": "Sophia Lark"
         },
         {
-            "trait_type": "Platform",
+            "trait_type": "platform",
             "value": "Atelia"
         },
         {
-            "trait_type": "Rarity",
+            "trait_type": "rarity",
             "value": "Collector’s Edition"
         }
     ]

@@ -1,41 +1,42 @@
 {
     "name": "Fractal Flow Dress",
+    "description": "An asymmetrical satin dress featuring emerald fractal-inspired prints and a dramatic high slit.",
     "image": "/design-four.png",
     "attributes": [
         {
-            "trait_type": "Collection",
+            "trait_type": "collection",
             "value": "Mathematical Dreams"
         },
         {
-            "trait_type": "Category",
+            "trait_type": "category",
             "value": "Conceptual Fashion"
         },
         {
-            "trait_type": "Color",
+            "trait_type": "color",
             "value": "Emerald Green"
         },
         {
-            "trait_type": "Material",
+            "trait_type": "material",
             "value": "Digital Print Satin"
         },
         {
-            "trait_type": "Style",
+            "trait_type": "style",
             "value": "Asymmetrical Cut"
         },
         {
-            "trait_type": "Unique Features",
+            "trait_type": "unique features",
             "value": "Fractal-inspired print, High slit"
         },
         {
-            "trait_type": "Designer",
+            "trait_type": "designer",
             "value": "Ritika Shah"
         },
         {
-            "trait_type": "Platform",
+            "trait_type": "platform",
             "value": "Atelia"
         },
         {
-            "trait_type": "Rarity",
+            "trait_type": "rarity",
             "value": "Rare Design"
         }
     ]

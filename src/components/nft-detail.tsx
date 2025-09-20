@@ -8,71 +8,17 @@ import { Badge } from "@/src/components/ui/badge"
 import { Separator } from "@/src/components/ui/separator"
 import { Heart, Share2, Flag, Eye, TrendingUp, Clock, User, Zap } from "lucide-react"
 import Link from "next/link"
+import { NftCollection, TokenState } from "../types/collections"
+import { Countdown } from "./ui/countdown"
+import { getCurrentTimeInMilliseconds } from "../lib/evm-helper"
 
-// Mock NFT data - in a real app, this would come from an API
-const mockNFTs = {
-  "1": {
-    id: "1",
-    title: "Cosmic Dreams #001",
-    description:
-      "A mesmerizing journey through the cosmos, featuring swirling galaxies and nebulae in vibrant colors. This piece represents the infinite possibilities of digital art and the beauty of the universe.",
-    image: "/cosmic-digital-art-with-nebula-and-stars.jpg",
-    price: "2.5 ETH",
-    creator: "ArtistX",
-    owner: "Collector123",
-    category: "Digital Art",
-    likes: 1247,
-    views: 8934,
-    created: "2024-01-15",
-    blockchain: "Ethereum",
-    tokenId: "0x1a2b3c...",
-    royalties: "10%",
-    properties: [
-      { trait: "Background", value: "Cosmic", rarity: "15%" },
-      { trait: "Style", value: "Abstract", rarity: "25%" },
-      { trait: "Colors", value: "Vibrant", rarity: "30%" },
-    ],
-    history: [
-      { event: "Minted", price: "0.1 ETH", from: "", to: "ArtistX", date: "2024-01-15" },
-      { event: "Sale", price: "1.2 ETH", from: "ArtistX", to: "Collector123", date: "2024-01-20" },
-      { event: "Listed", price: "2.5 ETH", from: "Collector123", to: "", date: "2024-01-25" },
-    ],
-  },
-  "2": {
-    id: "2",
-    title: "Neon City Nights",
-    description:
-      "A cyberpunk-inspired cityscape with neon lights reflecting off wet streets. This artwork captures the essence of a futuristic metropolis.",
-    image: "/cyberpunk-neon-city.png",
-    price: "1.8 ETH",
-    creator: "CyberArt",
-    owner: "TechCollector",
-    category: "Cyberpunk",
-    likes: 892,
-    views: 5621,
-    created: "2024-01-10",
-    blockchain: "Ethereum",
-    tokenId: "0x2b3c4d...",
-    royalties: "7.5%",
-    properties: [
-      { trait: "Theme", value: "Cyberpunk", rarity: "20%" },
-      { trait: "Lighting", value: "Neon", rarity: "18%" },
-      { trait: "Mood", value: "Dark", rarity: "35%" },
-    ],
-    history: [
-      { event: "Minted", price: "0.05 ETH", from: "", to: "CyberArt", date: "2024-01-10" },
-      { event: "Sale", price: "0.8 ETH", from: "CyberArt", to: "TechCollector", date: "2024-01-12" },
-      { event: "Listed", price: "1.8 ETH", from: "TechCollector", to: "", date: "2024-01-18" },
-    ],
-  },
+interface NFTDetailProps {
+  nft: NftCollection
 }
 
-export function NFTDetail({ id }: { id: string }) {
+export function NFTDetail({ nft }: NFTDetailProps) {
   const [isLiked, setIsLiked] = useState(false)
   const [activeTab, setActiveTab] = useState("details")
-
-  // Get NFT data or fallback to first NFT
-  const nft = mockNFTs[id as keyof typeof mockNFTs] || mockNFTs["1"]
 
   return (
     <div className="min-h-screen bg-background">
@@ -86,7 +32,7 @@ export function NFTDetail({ id }: { id: string }) {
             className="relative"
           >
             <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 shadow-2xl">
-              <img src={nft.image || "/placeholder.svg"} alt={nft.title} className="w-full h-full object-cover" />
+              <img src={nft.thumbnail || "/placeholder.svg"} alt={nft.title} className="w-full h-full object-cover" />
             </div>
 
             {/* Action Buttons */}
@@ -136,7 +82,7 @@ export function NFTDetail({ id }: { id: string }) {
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Creator</p>
-                      <p className="font-semibold">{nft.creator}</p>
+                      <p className="font-semibold">{nft.creator.slice(0, 6)}...{nft.creator.slice(-4)}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -150,7 +96,7 @@ export function NFTDetail({ id }: { id: string }) {
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Owner</p>
-                      <p className="font-semibold">{nft.owner}</p>
+                      <p className="font-semibold">{nft.creator.slice(0, 6)}...{nft.creator.slice(-4)}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -177,7 +123,7 @@ export function NFTDetail({ id }: { id: string }) {
                 <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
                   <TrendingUp className="h-4 w-4" />
                 </div>
-                <p className="text-2xl font-bold text-foreground">#{Math.floor(Math.random() * 100) + 1}</p>
+                <p className="text-2xl font-bold text-foreground">#{nft.id}</p>
                 <p className="text-sm text-muted-foreground">Rank</p>
               </div>
             </div>
@@ -196,16 +142,14 @@ export function NFTDetail({ id }: { id: string }) {
                 </div>
 
                 <div className="flex gap-3">
-                  <Button className="flex-1 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600">
+                  <Button disabled={nft.appStatus.state !== TokenState.BUY} className="flex-1 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600">
                     <Zap className="h-4 w-4 mr-2" />
                     Buy Now
                   </Button>
-                  <Link href="/auction" className="flex-1">
-                    <Button variant="outline" className="w-full bg-transparent">
-                      <Clock className="h-4 w-4 mr-2" />
-                      Place Bid
-                    </Button>
-                  </Link>
+                  <Countdown
+                    targetDate={nft.appStatus.buy_end_time}
+                    className="flex-1"
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -223,11 +167,10 @@ export function NFTDetail({ id }: { id: string }) {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`pb-3 px-1 text-sm font-medium capitalize transition-colors ${
-                  activeTab === tab
-                    ? "text-primary border-b-2 border-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`pb-3 px-1 text-sm font-medium capitalize transition-colors ${activeTab === tab
+                  ? "text-primary border-b-2 border-primary"
+                  : "text-muted-foreground hover:text-foreground"
+                  }`}
               >
                 {tab}
               </button>
@@ -244,19 +187,15 @@ export function NFTDetail({ id }: { id: string }) {
                 <CardContent className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Token ID</span>
-                    <span className="font-mono text-sm">{nft.tokenId}</span>
+                    <span className="font-mono text-sm">{nft.id}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Blockchain</span>
-                    <span>{nft.blockchain}</span>
+                    <span>Somnia Testnet</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Created</span>
-                    <span>{nft.created}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Royalties</span>
-                    <span>{nft.royalties}</span>
+                    <span>{new Date().toLocaleDateString()}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -265,14 +204,16 @@ export function NFTDetail({ id }: { id: string }) {
 
           {activeTab === "properties" && (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {nft.properties.map((property, index) => (
+              {nft.attributes.map((property, index) => (
                 <Card key={index}>
                   <CardContent className="p-4 text-center">
-                    <p className="text-sm text-muted-foreground mb-1">{property.trait}</p>
+                    <p className="text-sm text-muted-foreground mb-1">{property.trait_type}</p>
                     <p className="font-semibold mb-2">{property.value}</p>
-                    <Badge variant="secondary" className="text-xs">
-                      {property.rarity} have this trait
-                    </Badge>
+                    {property.rarity && (
+                      <Badge variant="secondary" className="text-xs">
+                        {property.rarity} have this trait
+                      </Badge>
+                    )}
                   </CardContent>
                 </Card>
               ))}
@@ -286,29 +227,7 @@ export function NFTDetail({ id }: { id: string }) {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {nft.history.map((transaction, index) => (
-                    <div key={index}>
-                      <div className="flex items-center justify-between py-3">
-                        <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                            <TrendingUp className="h-4 w-4 text-primary" />
-                          </div>
-                          <div>
-                            <p className="font-medium">{transaction.event}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {transaction.from && `From ${transaction.from}`}
-                              {transaction.to && ` To ${transaction.to}`}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-semibold">{transaction.price}</p>
-                          <p className="text-sm text-muted-foreground">{transaction.date}</p>
-                        </div>
-                      </div>
-                      {index < nft.history.length - 1 && <Separator />}
-                    </div>
-                  ))}
+                  Coming soon
                 </div>
               </CardContent>
             </Card>

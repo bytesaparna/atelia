@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform, useSpring, type MotionValue } from "mo
 import { Button } from "@/src/components/ui/button"
 import { cn } from "@/src/lib/utils"
 import { useRouter } from "next/navigation"
-import { NftCollection } from "../lib/app-utils"
+import { NftCollection } from "@/src/types/collections"
 
 export const HeroParallax = ({
   products,

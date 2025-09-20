@@ -1,11 +1,16 @@
-"use client"
-
-import { useParams } from "next/navigation"
 import { NFTDetail } from "@/src/components/nft-detail"
+import { queryNftCollection } from "@/src/server/api/collections/queries"
+import { RPC_PROVIDER } from "@/src/lib/evm-helper"
 
-export default function NFTDetailPage() {
-    const params = useParams()
-    const id = params.id as string
+interface NFTDetailPageProps {
+    params: Promise<{
+        id: string
+    }>
+}
 
-    return <NFTDetail id={id} />
+export default async function NFTDetailPage({ params }: NFTDetailPageProps) {
+    const { id } = await params
+    const nftCollection = await queryNftCollection(Number(id), RPC_PROVIDER)();
+
+    return <NFTDetail nft={nftCollection} />
 }

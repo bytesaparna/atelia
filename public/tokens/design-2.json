@@ -1,41 +1,42 @@
 {
     "name": "Neon Nights Dress",
+    "description": "A bold streetwear bodycon with electric pink and black tones, neon-highlighted fabric, and glow-in-the-dark accents.",
     "image": "/design-two.png",
     "attributes": [
         {
-            "trait_type": "Collection",
+            "trait_type": "collection",
             "value": "Urban Chic"
         },
         {
-            "trait_type": "Category",
+            "trait_type": "category",
             "value": "Streetwear"
         },
         {
-            "trait_type": "Color",
+            "trait_type": "color",
             "value": "Electric Pink & Black"
         },
         {
-            "trait_type": "Material",
+            "trait_type": "material",
             "value": "Polyester with Neon Highlights"
         },
         {
-            "trait_type": "Style",
+            "trait_type": "style",
             "value": "Bodycon, Sleeveless"
         },
         {
-            "trait_type": "Unique Features",
+            "trait_type": "unique features",
             "value": "Glow-in-dark accents"
         },
         {
-            "trait_type": "Designer",
+            "trait_type": "designer",
             "value": "Karan Mehta"
         },
         {
-            "trait_type": "Platform",
+            "trait_type": "platform",
             "value": "Atelia"
         },
         {
-            "trait_type": "Rarity",
+            "trait_type": "rarity",
             "value": "Exclusive Drop"
         }
     ]
