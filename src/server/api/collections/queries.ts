@@ -1,7 +1,7 @@
 import { APP_CONFIG } from "@/src/config/app-config";
 import { getCurrentTimeInMilliseconds, getTokensContract } from "@/src/lib/evm-helper";
 import { ITokenState, NftCollection, TokenState, TokenUri } from "@/src/types/collections";
-import { ethers, formatUnits } from "ethers";
+import { ethers } from "ethers";
 import { unstable_cache } from "next/cache";
 import { queryResolvePath } from "../vfs/queries";
 import { queryBuyExchangeConfig } from "../exchange/queries";

@@ -9,6 +9,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  staticPageGenerationTimeout: 120,
   webpack: (config) => {
     config.externals.push("pino-pretty", "lokijs", "encoding");
     return config;
