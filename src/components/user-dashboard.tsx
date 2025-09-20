@@ -84,7 +84,7 @@ const userNFTs = [
 ]
 
 const recentActivity = [
-  { type: "sale", description: "Neon Cityscape sold for 2.8 ETH", time: "2 hours ago" },
+  { type: "sale", description: "Neon Cityscape sold for 2.8 STT", time: "2 hours ago" },
   { type: "like", description: "Someone liked Cosmic Dreams #001", time: "4 hours ago" },
   { type: "follow", description: "CryptoCollector started following you", time: "1 day ago" },
   { type: "mint", description: "Abstract Flow minted successfully", time: "3 days ago" },
@@ -150,7 +150,7 @@ export function UserDashboard() {
                     <p className="text-sm text-muted-foreground">Following</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-foreground">{userStats.totalEarnings} ETH</p>
+                    <p className="text-2xl font-bold text-foreground">{userStats.totalEarnings} STT</p>
                     <p className="text-sm text-muted-foreground">Total Earnings</p>
                   </div>
                 </div>
@@ -178,7 +178,7 @@ export function UserDashboard() {
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-foreground">{userStats.totalEarnings} ETH</div>
+                <div className="text-2xl font-bold text-foreground">{userStats.totalEarnings} STT</div>
                 <p className="text-xs text-emerald-400">+12.5% from last month</p>
               </CardContent>
             </Card>
@@ -332,7 +332,7 @@ export function UserDashboard() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs text-muted-foreground">Price</p>
-                        <p className="font-semibold text-foreground">{nft.price} ETH</p>
+                        <p className="font-semibold text-foreground">{nft.price} STT</p>
                       </div>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">

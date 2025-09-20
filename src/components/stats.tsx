@@ -62,7 +62,7 @@ export function Stats() {
     {
       label: "Trading Volume",
       value: counts.volume.toLocaleString(),
-      suffix: "K ETH",
+      suffix: "K STT",
     },
   ]
 
