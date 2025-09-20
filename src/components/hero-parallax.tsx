@@ -45,17 +45,17 @@ export const HeroParallax = ({
       >
         <motion.div className="flex flex-row-reverse space-x-reverse space-x-20 mb-20">
           {firstRow.map((product) => (
-            <NFTCard product={product} translate={translateX} />
+            <NFTCard key={product.id} product={product} translate={translateX} />
           ))}
         </motion.div>
         <motion.div className="flex flex-row mb-20 space-x-20">
           {secondRow.map((product) => (
-            <NFTCard product={product} translate={translateXReverse} />
+            <NFTCard key={product.id} product={product} translate={translateXReverse} />
           ))}
         </motion.div>
         <motion.div className="flex flex-row-reverse space-x-reverse space-x-20">
           {thirdRow.map((product) => (
-            <NFTCard product={product} translate={translateX} />
+            <NFTCard key={product.id} product={product} translate={translateX} />
           ))}
         </motion.div>
       </motion.div>
@@ -140,11 +140,11 @@ export const NFTCard = ({
             {product.title}
           </h1>
 
-          {product.price && (
+          {product.appStatus.price_based_on_buy && (
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <span className="text-gray-300 text-sm">Current Price</span>
-                <span className="text-cyan-400 font-bold text-xl">{product.price} STT</span>
+                <span className="text-cyan-400 font-bold text-xl">{product.appStatus.price_based_on_buy} STT</span>
               </div>
               <Button
                 size="sm"

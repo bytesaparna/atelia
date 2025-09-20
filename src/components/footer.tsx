@@ -52,7 +52,7 @@ export function Footer() {
           >
             <div className="mb-6">
               <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
-                NFT Marketplace
+               Atelia
               </h3>
               <p className="text-slate-300 mt-4 leading-relaxed">
                 The premier destination for discovering, creating, and trading unique digital assets. Join thousands of
@@ -63,7 +63,7 @@ export function Footer() {
             <div className="space-y-3 text-sm text-slate-400">
               <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4" />
-                <span>hello@nftmarketplace.com</span>
+                <span>hello@atelia.com</span>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4" />
@@ -71,7 +71,7 @@ export function Footer() {
               </div>
               <div className="flex items-center gap-3">
                 <MapPin className="w-4 h-4" />
-                <span>San Francisco, CA</span>
+                <span>India</span>
               </div>
             </div>
           </motion.div>
@@ -154,7 +154,7 @@ export function Footer() {
           className="border-t border-slate-700/30 mt-8 pt-8 text-center"
         >
           <p className="text-slate-400 text-sm">
-            © 2024 NFT Marketplace. All rights reserved. Built with ❤️ for the digital art community.
+            © 2025 Atelia. All rights reserved. Built with ❤️ for the digital art community.
           </p>
         </motion.div>
       </div>

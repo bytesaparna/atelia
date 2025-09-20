@@ -6,7 +6,6 @@ export interface NftCollection {
     link: string;
     thumbnail: string;
     image: string;
-    price: number;
     creator: string;
 
     likes: number;
@@ -43,13 +42,9 @@ export interface ITokenState {
     buy_exchange_address: string;
     redeem_exchange_address: string;
     share_buy_price: number;
-    share_redeem_price: number;
-    latest_auction_price: number;
     min_bid_price: number;
     min_raise_price: number;
-    current_price: number;
     price_based_on_buy: number;
-    price_based_on_redeem: number;
     buy_end_time: number;
     auction_start_time: number;
     auction_end_time: number;

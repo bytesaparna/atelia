@@ -6,26 +6,26 @@ export function HowItWorks() {
   const steps = [
     {
       icon: Upload,
-      title: "Create & Upload",
-      description: "Upload your digital artwork and mint it as an NFT on the blockchain. Set your price and royalties.",
+      title: "Create & Upload Your Design",
+      description: "Upload your digital artwork and mint it as an NFT on the blockchain. Set your price.",
       step: "01",
     },
     {
       icon: Palette,
-      title: "Showcase Your Art",
-      description: "Your NFT appears in our marketplace where collectors can discover and appreciate your work.",
+      title: "Showcase Your Art on Exchange",
+      description: "Your NFT appears in our exchange platform where collectors can discover and appreciate your work by buying the shares.",
       step: "02",
     },
     {
       icon: ShoppingCart,
-      title: "Buy & Sell",
-      description: "Purchase NFTs with cryptocurrency or sell your collection to other enthusiasts worldwide.",
+      title: "Buy & Sell of Shares",
+      description: "Purchase NFTs with cryptocurrency or sell shares of your collection to other enthusiasts worldwide on the exchage platform.",
       step: "03",
     },
     {
       icon: TrendingUp,
-      title: "Earn Royalties",
-      description: "Earn ongoing royalties every time your NFT is resold, creating passive income from your art.",
+      title: "Auction",
+      description: "Auctions connect your creations with major brands. Winning bids not only reward you financially but also bring recognition, prestige, and stronger brand value.",
       step: "04",
     },
   ]

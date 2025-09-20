@@ -1,5 +1,5 @@
-import { getExchangeContract, toStructObject } from "@/src/lib/evm-helper";
-import { ethers } from "ethers";
+import { getExchangeContract } from "@/src/lib/evm-helper";
+import { ethers, formatUnits } from "ethers";
 import { unstable_cache } from "next/cache";
 import { queryResolvePath } from "../vfs/queries";
 import { APP_CONFIG } from "@/src/config/app-config";
@@ -11,7 +11,7 @@ export const queryBuyExchangeConfig = (token_id: number, provider: ethers.JsonRp
     return config;
 
 }, ["buy-exchange", "config", "token_id", token_id.toString()], {
-    revalidate: 60 * 5, // 5 minutes
+    revalidate: 60 * 60 * 24, // 5 minutes
 })
 
 export const queryRedeemExchangeConfig = (token_id: number, provider: ethers.JsonRpcProvider) => unstable_cache(async () => {
@@ -20,7 +20,7 @@ export const queryRedeemExchangeConfig = (token_id: number, provider: ethers.Jso
     return config;
 
 }, ["redeem-exchange", "config", "token_id", token_id.toString()], {
-    revalidate: 60 * 5, // 5 minutes
+    revalidate: 60 * 60 * 24, // 5 minutes
 })
 
 
@@ -32,11 +32,12 @@ const fetchExchangeConfig = async (exchange_address: string, provider: ethers.Js
         end_time: config.end_time.toString(),
         start_time: config.start_time.toString(),
         recipient: config.recipient,
-        amount: config.amount.toString(),
-        exchange_rate_bps: config.exchange_rate_bps.toString(),
-        exchanged_amount: config.exchanged_amount.toString(),
         from_asset: config.from_asset,
         to_asset: config.to_asset,
+
+        amount: Number(formatUnits(config.amount, "ether")),
+        exchange_rate_bps: Number(config.exchange_rate_bps.toString()),
+        exchanged_amount: Number(formatUnits(config.exchanged_amount, "ether")),
     }
 
 }

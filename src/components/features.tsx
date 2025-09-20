@@ -11,28 +11,28 @@ export function Features() {
     },
     {
       icon: Zap,
-      title: "Instant Trading",
-      description: "Lightning-fast transactions with minimal gas fees and instant settlement.",
+      title: "Instant Shareholding",
+      description: "Lightning-fast transactions with minimal gas fees and instant settlement on buying shares from exchange platform.",
     },
     {
       icon: Globe,
       title: "Global Marketplace",
-      description: "Connect with collectors and artists from around the world in our vibrant community.",
+      description: "Connect with collectors, artists and big brands from around the world in our vibrant community.",
     },
     {
       icon: Users,
       title: "Creator Tools",
-      description: "Advanced tools for artists including batch minting, collections, and analytics.",
+      description: "Advanced tools for artists including minting, sharing collections on exchange and auction.",
     },
     {
       icon: Lock,
       title: "Wallet Integration",
-      description: "Seamlessly connect with MetaMask, WalletConnect, and other popular wallets.",
+      description: "Seamlessly connect with MetaMask, Keplr, WalletConnect, and other popular wallets.",
     },
     {
       icon: Coins,
       title: "Multiple Currencies",
-      description: "Trade with ETH, WETH, and other popular cryptocurrencies with real-time rates.",
+      description: "Trade with STT, ETH, and other popular cryptocurrencies with real-time rates.",
     },
   ]
 

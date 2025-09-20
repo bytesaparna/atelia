@@ -134,7 +134,7 @@ export function NFTDetail({ nft }: NFTDetailProps) {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <p className="text-sm text-muted-foreground mb-1">Current Price</p>
-                    <p className="text-3xl font-bold text-primary">{nft.price}</p>
+                    <p className="text-3xl font-bold text-primary">{nft.appStatus.price_based_on_buy}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-muted-foreground">≈ $4,250 USD</p>

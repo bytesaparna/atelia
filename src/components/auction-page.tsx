@@ -6,17 +6,24 @@ import { Button } from "@/src/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Input } from "@/src/components/ui/input"
 import { Badge } from "@/src/components/ui/badge"
-import { Separator } from "@/src/components/ui/separator"
 import { Clock, Gavel, TrendingUp, Zap, Heart, Eye, User } from "lucide-react"
 import Link from "next/link"
 import { NftCollection } from "../types/collections"
 import { Countdown } from "./ui/countdown"
 import { TOKEN_DENOM } from "../config/app-config"
+import { api } from "../trpc/clients"
+import { formatUnits } from "ethers"
 
 
 function AuctionCard({ auction }: { auction: NftCollection }) {
   const [bidAmount, setBidAmount] = useState("")
-  const [isLiked, setIsLiked] = useState(false)
+  const [isLiked, setIsLiked] = useState(false);
+
+  const { data: highestBidder } = api.auction.highestBid.useQuery({
+    token_id: auction.id
+  })
+
+  const highest_price = highestBidder?.high_bidder_amount || auction.appStatus.min_bid_price
 
 
   return (
@@ -97,7 +104,7 @@ function AuctionCard({ auction }: { auction: NftCollection }) {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Current Bid</p>
-                <p className="text-3xl font-bold text-primary">{auction.appStatus.latest_auction_price}</p>
+                <p className="text-3xl font-bold text-primary">{highest_price}</p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Starting Bid</p>
@@ -109,12 +116,12 @@ function AuctionCard({ auction }: { auction: NftCollection }) {
               <div className="flex gap-3">
                 <Input
                   type="number"
-                  placeholder={`Min bid: ${auction.appStatus.latest_auction_price + auction.appStatus.min_raise_price} ${TOKEN_DENOM}`}
+                  placeholder={`Min bid: ${highest_price + auction.appStatus.min_raise_price} ${TOKEN_DENOM}`}
                   value={bidAmount}
                   onChange={(e) => setBidAmount(e.target.value)}
                   className="flex-1"
                   step="0.1"
-                  min={auction.appStatus.latest_auction_price + auction.appStatus.min_raise_price}
+                  min={highest_price + auction.appStatus.min_raise_price}
                 />
                 <Button className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600">
                   <Gavel className="h-4 w-4 mr-2" />
@@ -122,7 +129,7 @@ function AuctionCard({ auction }: { auction: NftCollection }) {
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground">
-                Minimum bid: {auction.appStatus.latest_auction_price + auction.appStatus.min_raise_price} ${TOKEN_DENOM} (${(auction.appStatus.latest_auction_price + auction.appStatus.min_raise_price * 1700).toLocaleString()} USD)
+                Minimum bid: {highest_price + auction.appStatus.min_raise_price} ${TOKEN_DENOM} (${(highest_price + auction.appStatus.min_raise_price * 1700).toLocaleString()} USD)
               </p>
             </div>
           </CardContent>
@@ -194,7 +201,6 @@ const AuctionPage: FC<AuctionPageProps> = ({ nftCollection }) => {
                 />
                 <div className="text-left">
                   <p className="font-semibold text-sm">{auction.title}</p>
-                  <p className="text-primary font-bold text-sm">{auction.appStatus.latest_auction_price}</p>
                 </div>
               </div>
             </button>

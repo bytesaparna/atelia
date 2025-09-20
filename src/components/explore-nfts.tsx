@@ -39,9 +39,9 @@ const ExploreNFTs: FC<ExploreNFTsProps> = ({ nftCollections }) => {
   const sortedNFTs = [...filteredNFTs].sort((a, b) => {
     switch (sortBy) {
       case "price-high":
-        return b.price - a.price
+        return b.appStatus.price_based_on_buy - a.appStatus.price_based_on_buy
       case "price-low":
-        return a.price - b.price
+        return a.appStatus.price_based_on_buy - b.appStatus.price_based_on_buy
       case "likes":
         return b.likes - a.likes
       case "views":
@@ -161,7 +161,7 @@ const ExploreNFTs: FC<ExploreNFTsProps> = ({ nftCollections }) => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs text-muted-foreground">Price</p>
-                      <p className="font-semibold text-foreground">{nft.price} {TOKEN_DENOM}</p>
+                      <p className="font-semibold text-foreground">{nft.appStatus.price_based_on_buy} {TOKEN_DENOM}</p>
                     </div>
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       <div className="flex items-center gap-1">
@@ -216,7 +216,7 @@ const ExploreNFTs: FC<ExploreNFTsProps> = ({ nftCollections }) => {
                         </Badge>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-foreground">{nft.price} ETH</p>
+                        <p className="font-semibold text-foreground">{nft.appStatus.price_based_on_buy} {TOKEN_DENOM}</p>
                         <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
                           <div className="flex items-center gap-1">
                             <Heart className="h-3 w-3" />
