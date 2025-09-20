@@ -5,6 +5,7 @@ import { Button } from "@/src/components/ui/button"
 import { cn } from "@/src/lib/utils"
 import { useRouter } from "next/navigation"
 import { NftCollection } from "@/src/types/collections"
+import Link from "next/link"
 
 export const HeroParallax = ({
   products,
@@ -103,6 +104,10 @@ export const NFTCard = ({
   product: NftCollection
   translate: MotionValue<number>
 }) => {
+  const router = useRouter()
+  const handleCardClick = () => {
+    router.push(`/nft/${product.id}`)
+  }
   return (
     <motion.div
       style={{
@@ -122,6 +127,7 @@ export const NFTCard = ({
         style={{
           backgroundImage: `url(${product.thumbnail || "/placeholder.svg"})`,
         }}
+        onClick={handleCardClick}
       >
         {product.creator && (
           <div className="flex flex-row items-center space-x-3 z-10 opacity-0 group-hover/product:opacity-100 transition-opacity duration-300">
@@ -149,8 +155,9 @@ export const NFTCard = ({
               <Button
                 size="sm"
                 className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white border-0 shadow-lg opacity-0 group-hover/product:opacity-100 transition-all duration-300 transform translate-y-2 group-hover/product:translate-y-0"
+                onClick={(e) => e.stopPropagation()}
               >
-                Buy Now
+                <Link href={`/nft/${product.id}/#buy-now-details`} > Buy Now</Link>
               </Button>
             </div>
           )}

@@ -22,7 +22,7 @@ interface NFTDetailProps {
 export function NFTDetail({ nft }: NFTDetailProps) {
   const [isLiked, setIsLiked] = useState(false)
   const [activeTab, setActiveTab] = useState("details")
-  const [purchaseShareAmount, setPurchaseShareAmount] = useState<number>(0)
+  const [purchaseShareAmount, setPurchaseShareAmount] = useState<number>(1)
   const [payAmount, setPayAmount] = useState<number>(0)
   const { data: sharesData } = api.exchange.buyConfig.useQuery({ token_id: nft.id })
   const handlePurchaseShare = () => {
@@ -151,16 +151,45 @@ export function NFTDetail({ nft }: NFTDetailProps) {
                   </div>
                 </div>
 
-                <div className="flex gap-3">
-                  <Button disabled={nft.appStatus.state !== TokenState.BUY} className="flex-1 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600"
-                  >
-                    <Zap className="h-4 w-4 mr-2" />
-                    <Link href="#buy-now-details">Buy Now</Link>
-                  </Button>
+                <div className="flex justify-between gap-6 w-full">
+                  <div className="flex flex-1 flex-col gap-2">
+                    <div>
+                      <Input
+                        placeholder="1"
+                        className=" pr-16 border-1 border-emerald-400/50 !bg-transparent"
+                        value={purchaseShareAmount}
+                        max={sharesData?.amount}
+                        min={1}
+                        onChange={(e) => {
+                          const val = Number(e.target.value)
+                          const maxVal = sharesData?.amount ?? 0
+                          const clampedVal = Math.max(0, Math.min(val, maxVal)) // clamp value
+                          setPurchaseShareAmount(clampedVal)
+                          setPayAmount(clampedVal * nft.appStatus.share_buy_price)
+                        }}
+                      />
+                      <span className="absolute right-24 top-1/2 -translate-y-1/2 text-sm text-gray-600">
+                        Max ({sharesData?.amount})
+                      </span>
+                    </div>
+                    <PromiseButton id="buy-now-details" disabled={nft.appStatus.state !== TokenState.BUY} className="flex-1 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600"
+                      onClick={handlePurchaseShare}
+                    >
+                      <Zap className="h-4 w-4 mr-2" />
+                      <Link href="#buy-now-details">Buy Now</Link>
+                    </PromiseButton>
+                  </div>
                   <Countdown
                     targetDate={nft.appStatus.buy_end_time}
-                    className="flex-1"
+                    className="flex"
                   />
+                </div>
+                <div className=" mt-6">
+                  <div className="flex justify-between">
+                    <p className="text-sm text-muted-foreground mb-1">Sold Shares ({sharesData?.exchanged_amount})</p>
+                    <p className="text-sm text-muted-foreground mb-1">Total Shares ({sharesData?.amount})</p>
+                  </div>
+                  <Progress value={sharesData?.exchanged_amount} className="w-[100%]" />
                 </div>
               </CardContent>
             </Card>
@@ -244,64 +273,6 @@ export function NFTDetail({ nft }: NFTDetailProps) {
             </Card>
           )}
         </motion.div>
-      </div>
-
-
-      <div id="buy-now-details" className=" flex items-center justify-center mb-10 mx-24">
-        <Card className="w-full max-w-full rounded-xl py-4 px-50 shadow-2xl backdrop-blur-sm">
-          <CardContent className="p-6">
-            <h3 className="text-2xl font-bold text-foreground mb-4 text-center">{nft.title}</h3>
-            <div className="flex justify-between">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Current Price</p>
-                  <p className="text-xl font-bold text-primary">{nft.appStatus.share_buy_price} {TOKEN_DENOM}</p>
-                </div>
-              </div>
-
-            </div>
-            <div className="flex flex-col mb-10">
-              <p className="text-sm text-muted-foreground mb-1">Enter share amount</p>
-              <div className="relative w-full">
-                <Input
-                  placeholder="10"
-                  type="number"
-                  className="!bg-white text-black pr-16 border-2 border-emerald-400" // extra padding so text doesn't overlap
-                  value={purchaseShareAmount}
-                  max={sharesData?.amount}
-                  onChange={(e) => {
-                    const val = Number(e.target.value)
-                    const maxVal = sharesData?.amount ?? 0
-                    const clampedVal = Math.max(0, Math.min(val, maxVal)) // clamp value
-                    setPurchaseShareAmount(clampedVal)
-                    setPayAmount(clampedVal * nft.appStatus.share_buy_price)
-                  }}
-                />
-                <span className="absolute right-24 top-1/2 -translate-y-1/2 text-sm text-gray-600">
-                  Max ({sharesData?.amount})
-                </span>
-              </div>
-              <div className=" mt-4">
-                <div className="flex justify-between">
-                  <p className="text-sm text-muted-foreground mb-1">Sold Shares ({sharesData?.exchanged_amount})</p>
-                  <p className="text-sm text-muted-foreground mb-1">Total Shares ({sharesData?.amount})</p>
-                </div>
-                <Progress value={sharesData?.exchanged_amount} className="w-[100%]" />
-              </div>
-            </div>
-
-
-
-            <div className="flex items-center justify-center gap-3">
-              <PromiseButton disabled={nft.appStatus.state !== TokenState.BUY} className="min-w-xl bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600"
-                onClick={handlePurchaseShare}
-              >
-                <Zap className="h-4 w-4 mr-2" />
-                Buy Now at {payAmount} {TOKEN_DENOM}
-              </PromiseButton>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   )
