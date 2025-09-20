@@ -5,7 +5,7 @@ import { motion } from "motion/react"
 import { Button } from "@/src/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Badge } from "@/src/components/ui/badge"
-import { Heart, Share2, Flag, Eye, TrendingUp, Clock, User, Zap } from "lucide-react"
+import { Heart, Share2, Flag, Eye, TrendingUp, Clock, User, Zap, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { NftCollection, TokenState } from "../types/collections"
 import { Countdown } from "./ui/countdown"
@@ -42,6 +42,13 @@ export function NFTDetail({ nft }: NFTDetailProps) {
             className="relative"
           >
             <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 shadow-2xl">
+              <div className="absolute top-2 right-2">
+                <a href={`https://shannon-explorer.somnia.network/token/${nft.contract_address}/instance/${nft.id}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                  <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 text-white">
+                    <ExternalLink className="h-4 w-4" />
+                  </Button>
+                </a>
+              </div>
               <img src={nft.thumbnail || "/placeholder.svg"} alt={nft.title} className="w-full h-full object-cover" />
             </div>
 
@@ -169,9 +176,6 @@ export function NFTDetail({ nft }: NFTDetailProps) {
                           setPayAmount(clampedVal * nft.appStatus.share_buy_price)
                         }}
                       />
-                      <span className="absolute right-24 top-1/2 -translate-y-1/2 text-sm text-gray-600">
-                        Max ({sharesData?.amount})
-                      </span>
                     </div>
                     <PromiseButton id="buy-now-details" disabled={nft.appStatus.state !== TokenState.BUY} className="flex-1 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600"
                       onClick={handlePurchaseShare}
