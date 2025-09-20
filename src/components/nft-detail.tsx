@@ -147,12 +147,13 @@ export function NFTDetail({ nft }: NFTDetailProps) {
                     <p className="text-3xl font-bold text-primary">{nft.appStatus.price_based_on_buy}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-muted-foreground">≈ $4,250 USD</p>
+                    <p className="text-sm text-muted-foreground">{nft.appStatus.share_buy_price} {TOKEN_DENOM} per share</p>
                   </div>
                 </div>
 
                 <div className="flex justify-between gap-6 w-full">
                   <div className="flex flex-1 flex-col gap-2">
+                    <p className="text-xs text-gray-400">Shares to buy</p>
                     <div>
                       <Input
                         placeholder="1"
@@ -176,7 +177,7 @@ export function NFTDetail({ nft }: NFTDetailProps) {
                       onClick={handlePurchaseShare}
                     >
                       <Zap className="h-4 w-4 mr-2" />
-                      <Link href="#buy-now-details">Buy Now</Link>
+                      <Link href="#buy-now-details">Buy Now for {purchaseShareAmount * nft.appStatus.share_buy_price} {TOKEN_DENOM}</Link>
                     </PromiseButton>
                   </div>
                   <Countdown

@@ -32,6 +32,9 @@ export function Navigation() {
       <Link href="/auction" className="text-foreground hover:text-cyan-400 transition-colors">
         Auctions
       </Link>
+      <Link href="/redeem" className="text-foreground hover:text-cyan-400 transition-colors">
+        Redeems
+      </Link>
     </>
   )
 

@@ -3,6 +3,7 @@ import { motion } from "framer-motion"
 import { Upload, Palette, ShoppingCart, TrendingUp } from "lucide-react"
 
 export function HowItWorks() {
+
   const steps = [
     {
       icon: Upload,
@@ -29,6 +30,32 @@ export function HowItWorks() {
       step: "04",
     },
   ]
+  const stepsDescription = [
+    {
+      image: "/design-one.png",
+      title: "Create & Upload Your Design",
+      description: "Upload your digital artwork and mint it as an NFT on the blockchain. Set your price.",
+      step: "01",
+    },
+    {
+      image: "/design-two.png",
+      title: "Showcase Your Art on Exchange",
+      description: "Your NFT appears in our exchange platform where collectors can discover and appreciate your work by buying the shares.",
+      step: "02",
+    },
+    {
+      image: "/design-three.png",
+      title: "Buy & Sell of Shares",
+      description: "Purchase NFTs with cryptocurrency or sell shares of your collection to other enthusiasts worldwide on the exchage platform.",
+      step: "03",
+    },
+    {
+      image: "/design-four.png",
+      title: "Auction",
+      description: "Auctions connect your creations with major brands. Winning bids not only reward you financially but also bring recognition, prestige, and stronger brand value.",
+      step: "04",
+    },
+  ]
 
   return (
     <section className="py-24 px-4 bg-gradient-to-b from-background to-slate-900/20">
@@ -49,29 +76,56 @@ export function HowItWorks() {
             masterpieces.
           </p>
         </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {steps.map((step, index) => (
-            <motion.div
-              key={step.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="relative group"
-            >
-              <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-8 h-full hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10">
-                <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                  {step.step}
+        <div className="flex justify-between">
+          <div className="grid grid-rows-1 md:grid-rows-2 lg:grid-rows-4 gap-8">
+            {steps.map((step, index) => (
+              <motion.div
+                key={step.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="relative group max-w-lg"
+              >
+                <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-8 h-full hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10">
+                  <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                    {step.step}
+                  </div>
+                  <div className="mb-6 p-3 bg-gradient-to-r from-cyan-500/10 to-emerald-500/10 rounded-xl w-fit">
+                    <step.icon className="w-8 h-8 text-cyan-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-4">{step.title}</h3>
+                  <p className="text-slate-300 leading-relaxed">{step.description}</p>
                 </div>
-                <div className="mb-6 p-3 bg-gradient-to-r from-cyan-500/10 to-emerald-500/10 rounded-xl w-fit">
-                  <step.icon className="w-8 h-8 text-cyan-400" />
+              </motion.div>
+            ))}
+          </div>
+          <div className="grid grid-rows-1 md:grid-rows-2 lg:grid-rows-4 gap-8">
+            {stepsDescription.map((step, index) => (
+              <motion.div
+                key={step.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="relative group max-w-lg"
+              >
+                <div className="backdrop-blur-sm h-full hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10">
+                  <div className="overflow-hidden rounded-full shadow-2xl shadow-black inline-block">
+                    <img
+                      src={step.image}
+                      width={600}
+                      height={1000}
+                      className="rounded-full"
+                    />
+                  </div>
+                  <p className="text-slate-300 leading-relaxed mt-4">
+                    {step.description}
+                  </p>
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-4">{step.title}</h3>
-                <p className="text-slate-300 leading-relaxed">{step.description}</p>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

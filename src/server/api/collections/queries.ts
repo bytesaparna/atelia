@@ -106,7 +106,7 @@ export const queryTokenState = (token_id: number, provider = RPC_PROVIDER) => un
 
     const min_bid_price = auctionStatus.min_bid;
     const min_raise_price = auctionStatus.min_raise
-    const share_buy_price = exchangeConfig.exchange_rate_bps / 10000;
+    const share_buy_price = 10000 / exchangeConfig.exchange_rate_bps;
 
     const total_shares = exchangeConfig.amount + exchangeConfig.exchanged_amount;
 

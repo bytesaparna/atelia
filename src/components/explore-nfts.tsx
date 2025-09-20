@@ -14,16 +14,16 @@ import { Countdown } from "./ui/countdown"
 
 
 interface ExploreNFTsProps {
-  nftCollections: NftCollection[]
+  nftCollections: NftCollection[];
+  isRedeem?: boolean; // TODO - remove this ones portfolio is integrated
 }
 
 
-const ExploreNFTs: FC<ExploreNFTsProps> = ({ nftCollections }) => {
+const ExploreNFTs: FC<ExploreNFTsProps> = ({ nftCollections, isRedeem }) => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [sortBy, setSortBy] = useState("trending")
-  const [isOpen, setIsOpen] = useState(false)
 
   const categories = useMemo(() => {
     return nftCollections.map(n => n.category).filter((category, index, self) => self.indexOf(category) === index)
@@ -177,14 +177,16 @@ const ExploreNFTs: FC<ExploreNFTsProps> = ({ nftCollections }) => {
                     </div>
                   </div>
 
-                  <div className="flex gap-2">
-                    <Countdown
-                      targetDate={nft.appStatus.buy_end_time}
-                      className="flex-1"
-                    />
-                  </div>
+                  {!isRedeem && (
+                    <div className="flex gap-2">
+                      <Countdown
+                        targetDate={nft.appStatus.buy_end_time}
+                        className="flex-1"
+                      />
+                    </div>
+                  )}
                   <Button className="flex-1 w-full bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600">
-                    <Link href={`/nft/${nft.id}/#buy-now-details`}>Buy Now</Link>
+                    <Link href={`/nft/${nft.id}/#buy-now-details`}>{isRedeem ? "Redeem" : "Buy Now"}</Link>
                   </Button>
                 </div>
               </CardContent>
