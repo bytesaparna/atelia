@@ -14,7 +14,7 @@ Any changes you make to your deployed app will be automatically pushed to this r
 
 Your project is live at:
 
-**[https://vercel.com/aparnas-projects-f8482ce7/v0-open-in-v0](https://vercel.com/aparnas-projects-f8482ce7/v0-open-in-v0)**
+**[https://atelia.vercel.app](https://atelia.vercel.app)**
 
 ## Build your app
 
