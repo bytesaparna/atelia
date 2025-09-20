@@ -1,35 +1,65 @@
 import { BigNumberish, ethers } from "ethers"
-import { AuctionContract__factory, Cw20Contract__factory, Cw721Contract, Cw721Contract__factory, ExchangeContract__factory, KernelContract__factory, VfsContract__factory } from "../contract-types";
+import { AuctionContract__factory, Cw20Contract__factory, Cw721Contract__factory, ExchangeContract__factory, KernelContract__factory, Multicall3__factory, VfsContract__factory } from "../contract-types";
 import { trpcClient } from "../trpc/clients";
 import { cache } from "react";
+import { createPublicClient, getContract, http } from "viem"
+import { somniaTestnet } from "viem/chains";
+
 
 
 const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL
 
-export const RPC_PROVIDER = new ethers.JsonRpcProvider(RPC_URL);
+// 1️⃣  Create a viem client that wraps multicall
+export const RPC_PROVIDER = createPublicClient({
+    chain: somniaTestnet,
+    transport: http(RPC_URL),
+    batch: {
+        multicall: true  // <— this enables viem’s internal multicall3 batching
+    }
+})
+
+
+
 
 export const KERNEL_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_KERNEL_ADDRESS;
-export const KERNEL_CONTRACT = KernelContract__factory.connect(KERNEL_CONTRACT_ADDRESS, RPC_PROVIDER)
+export const KERNEL_CONTRACT = getContract({
+    address: KERNEL_CONTRACT_ADDRESS as `0x${string}`,
+    abi: KernelContract__factory.abi,
+    client: RPC_PROVIDER
+})
 
 export const VFS_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_VFS_ADDRESS;
-export const VFS_CONTRACT = VfsContract__factory.connect(VFS_CONTRACT_ADDRESS, RPC_PROVIDER)
-
-
+export const VFS_CONTRACT = getContract({
+    address: VFS_CONTRACT_ADDRESS as `0x${string}`,
+    abi: VfsContract__factory.abi,
+    client: RPC_PROVIDER
+})
 
 export const getTokensContract = cache(async (path: string, provider = RPC_PROVIDER) => {
     let token_address = path;
     if (!path.startsWith("0x")) {
         token_address = await trpcClient.vfs.resolvePath.query({ path })
     }
-    return Cw721Contract__factory.connect(token_address, provider)
+    const c = getContract({
+        address: token_address as `0x${string}`,
+        abi: Cw721Contract__factory.abi,
+        client: provider
+
+    })
+    return c;
 })
+
 
 export const getSharesContract = cache(async (path: string, provider = RPC_PROVIDER) => {
     let share_address = path;
     if (!path.startsWith("0x")) {
         share_address = await trpcClient.vfs.resolvePath.query({ path })
     }
-    return Cw20Contract__factory.connect(share_address, provider)
+    return getContract({
+        address: share_address as `0x${string}`,
+        abi: Cw20Contract__factory.abi,
+        client: provider
+    })
 })
 
 export const getAuctionContract = cache(async (path: string, provider = RPC_PROVIDER) => {
@@ -37,7 +67,11 @@ export const getAuctionContract = cache(async (path: string, provider = RPC_PROV
     if (!path.startsWith("0x")) {
         auction_address = await trpcClient.vfs.resolvePath.query({ path })
     }
-    return AuctionContract__factory.connect(auction_address, provider)
+    return getContract({
+        address: auction_address as `0x${string}`,
+        abi: AuctionContract__factory.abi,
+        client: provider
+    })
 })
 
 export const getExchangeContract = cache(async (path: string, provider = RPC_PROVIDER) => {
@@ -45,7 +79,11 @@ export const getExchangeContract = cache(async (path: string, provider = RPC_PRO
     if (!path.startsWith("0x")) {
         exchange_address = await trpcClient.vfs.resolvePath.query({ path })
     }
-    return ExchangeContract__factory.connect(exchange_address, provider)
+    return getContract({
+        address: exchange_address as `0x${string}`,
+        abi: ExchangeContract__factory.abi,
+        client: provider
+    })
 })
 
 
@@ -74,3 +112,4 @@ export function toStructObject<T extends object>(tuple: T): Cleaned<T> {
     }
     return out;
 }
+

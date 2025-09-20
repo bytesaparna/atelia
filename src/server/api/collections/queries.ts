@@ -1,5 +1,5 @@
 import { APP_CONFIG } from "@/src/config/app-config";
-import { getCurrentTimeInMilliseconds, getTokensContract } from "@/src/lib/evm-helper";
+import { getCurrentTimeInMilliseconds, getTokensContract, RPC_PROVIDER } from "@/src/lib/evm-helper";
 import { ITokenState, NftCollection, TokenState, TokenUri } from "@/src/types/collections";
 import { ethers } from "ethers";
 import { unstable_cache } from "next/cache";
@@ -9,37 +9,37 @@ import { queryLatestAuctionState } from "../auction/queries";
 
 
 
-export const queryTokenUri = (token_id: number) => unstable_cache(async (provider: ethers.JsonRpcProvider) => {
+export const queryTokenUri = (token_id: number) => unstable_cache(async (provider = RPC_PROVIDER) => {
     const tokens_address = await queryResolvePath(APP_CONFIG.token_address())();
     const contract = await getTokensContract(tokens_address, provider);
-    const token = await contract.tokenURI(token_id);
+    const token = await contract.read.tokenURI([BigInt(token_id)]);
     return token
 }, ["token_uri", token_id.toString()], {
     revalidate: 60 * 60 * 24, // 24 hrs
 })
 
 
-export const queryTokensSupply = unstable_cache(async (provider: ethers.JsonRpcProvider) => {
+export const queryTokensSupply = unstable_cache(async (provider = RPC_PROVIDER) => {
     const tokens_address = await queryResolvePath(APP_CONFIG.token_address())();
     const contract = await getTokensContract(tokens_address, provider);
-    const num_tokens = await contract.totalSupply();
+    const num_tokens = await contract.read.totalSupply();
     return Number(num_tokens)
 }, ["tokens_supply"], {
     revalidate: 60 * 5, // 5 minutes
 })
 
 
-export const queryTokenByIndex = (index: number) => unstable_cache(async (provider: ethers.JsonRpcProvider) => {
+export const queryTokenByIndex = (index: number) => unstable_cache(async (provider = RPC_PROVIDER) => {
     const tokens_address = await queryResolvePath(APP_CONFIG.token_address())();
     const contract = await getTokensContract(tokens_address, provider);
-    const token = await contract.tokenByIndex(index);
+    const token = await contract.read.tokenByIndex([BigInt(index)]);
     return Number(token)
 }, ["token_by_index", index.toString()], {
     revalidate: 60 * 60 * 24, // 24 hrs
 })
 
 
-export const queryAllTokens = unstable_cache(async (provider: ethers.JsonRpcProvider) => {
+export const queryAllTokens = unstable_cache(async (provider = RPC_PROVIDER) => {
     const num_tokens = await queryTokensSupply(provider);
     const items = new Array(Number(num_tokens)).fill(0).map(async (_, i) => {
         const token = await queryTokenByIndex(i)(provider);
@@ -52,7 +52,7 @@ export const queryAllTokens = unstable_cache(async (provider: ethers.JsonRpcProv
 })
 
 
-export const queryNftCollections = unstable_cache(async (provider: ethers.JsonRpcProvider) => {
+export const queryNftCollections = unstable_cache(async (provider = RPC_PROVIDER) => {
     const tokens = await queryAllTokens(provider);
     const collections = await Promise.all(tokens.map(async (token_id) => {
         const nftCollection = await queryNftCollection(token_id, provider)();
@@ -63,7 +63,7 @@ export const queryNftCollections = unstable_cache(async (provider: ethers.JsonRp
     revalidate: 60 * 5, // 5 minutes
 })
 
-export const queryNftCollection = (token_id: number, provider: ethers.JsonRpcProvider) => unstable_cache(async () => {
+export const queryNftCollection = (token_id: number, provider = RPC_PROVIDER) => unstable_cache(async () => {
     const tokens_address = await queryResolvePath(APP_CONFIG.token_address())();
     const tokenUri = await queryTokenUri(token_id)(provider);
     const tokenUriData = await fechTokenUri(tokenUri);
@@ -97,7 +97,7 @@ export const convertTokenUriToNftCollection = (tokenUri: TokenUri) => {
 }
 
 
-export const queryTokenState = (token_id: number, provider: ethers.JsonRpcProvider) => unstable_cache(async () => {
+export const queryTokenState = (token_id: number, provider = RPC_PROVIDER) => unstable_cache(async () => {
     const exchangeConfig = await queryBuyExchangeConfig(token_id, provider)();
     const auctionStatus = await queryLatestAuctionState(token_id, provider)();
     const redeem_address = await queryResolvePath(APP_CONFIG.redeem_exchange_address(token_id))();

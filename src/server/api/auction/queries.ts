@@ -1,11 +1,11 @@
-import { getAuctionContract, toStructObject } from "@/src/lib/evm-helper";
+import { getAuctionContract, RPC_PROVIDER } from "@/src/lib/evm-helper";
 import { ethers, formatUnits } from "ethers";
 import { unstable_cache } from "next/cache";
 import { queryResolvePath } from "../vfs/queries";
 import { APP_CONFIG } from "@/src/config/app-config";
 
 
-export const queryLatestAuctionState = (token_id: number, provider: ethers.JsonRpcProvider) => unstable_cache(async () => {
+export const queryLatestAuctionState = (token_id: number, provider = RPC_PROVIDER) => unstable_cache(async () => {
     const state = await cachedLatestAuctionState(token_id, provider)();
     return {
         auction_address: state.auction_address,
@@ -22,7 +22,7 @@ export const queryLatestAuctionState = (token_id: number, provider: ethers.JsonR
     revalidate: 60 * 60 * 24, // 24 hrs
 })
 
-export const queryLatestAuctionBidders = (token_id: number, provider: ethers.JsonRpcProvider) => unstable_cache(async () => {
+export const queryLatestAuctionBidders = (token_id: number, provider = RPC_PROVIDER) => unstable_cache(async () => {
     const state = await cachedLatestAuctionState(token_id, provider)();
     return {
         high_bidder_amount: state.high_bidder_amount,
@@ -33,10 +33,10 @@ export const queryLatestAuctionBidders = (token_id: number, provider: ethers.Jso
 })
 
 
-const cachedLatestAuctionState = (token_id: number, provider: ethers.JsonRpcProvider) => unstable_cache(async () => {
+const cachedLatestAuctionState = (token_id: number, provider = RPC_PROVIDER) => unstable_cache(async () => {
     const contract_address = await queryResolvePath(APP_CONFIG.auction_address())();
     const contract = await getAuctionContract(contract_address, provider);
-    const state = await contract.latest_auction_state(token_id);
+    const state = await contract.read.latest_auction_state([BigInt(token_id)]);
     return {
         auction_address: contract_address,
         end_time: state.end_time.toString(),

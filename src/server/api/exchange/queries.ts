@@ -1,11 +1,11 @@
-import { getExchangeContract } from "@/src/lib/evm-helper";
+import { getExchangeContract, RPC_PROVIDER } from "@/src/lib/evm-helper";
 import { ethers, formatUnits } from "ethers";
 import { unstable_cache } from "next/cache";
 import { queryResolvePath } from "../vfs/queries";
 import { APP_CONFIG } from "@/src/config/app-config";
 
 
-export const queryBuyExchangeConfig = (token_id: number, provider: ethers.JsonRpcProvider) => unstable_cache(async () => {
+export const queryBuyExchangeConfig = (token_id: number, provider = RPC_PROVIDER) => unstable_cache(async () => {
     const exchange_address = await queryResolvePath(APP_CONFIG.buy_exchange_address(token_id))();
     const config = await fetchExchangeConfig(exchange_address, provider);
     return config;
@@ -14,7 +14,7 @@ export const queryBuyExchangeConfig = (token_id: number, provider: ethers.JsonRp
     revalidate: 60 * 60 * 24, // 5 minutes
 })
 
-export const queryRedeemExchangeConfig = (token_id: number, provider: ethers.JsonRpcProvider) => unstable_cache(async () => {
+export const queryRedeemExchangeConfig = (token_id: number, provider = RPC_PROVIDER) => unstable_cache(async () => {
     const exchange_address = await queryResolvePath(APP_CONFIG.redeem_exchange_address(token_id))();
     const config = await fetchExchangeConfig(exchange_address, provider);
     return config;
@@ -24,9 +24,9 @@ export const queryRedeemExchangeConfig = (token_id: number, provider: ethers.Jso
 })
 
 
-const fetchExchangeConfig = async (exchange_address: string, provider: ethers.JsonRpcProvider) => {
+const fetchExchangeConfig = async (exchange_address: string, provider = RPC_PROVIDER) => {
     const contract = await getExchangeContract(exchange_address, provider);
-    const config = await contract.config();
+    const config = await contract.read.config();
     return {
         contract_address: exchange_address,
         end_time: config.end_time.toString(),

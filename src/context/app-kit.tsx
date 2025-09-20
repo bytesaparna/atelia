@@ -2,7 +2,7 @@
 import { wagmiAdapter, projectId, networks } from '@/src/config'
 import { somniaTestnet } from '@reown/appkit/networks';
 import { createAppKit } from "@reown/appkit/react";
-import { FC } from 'react';
+import { FC, useLayoutEffect, useState } from 'react';
 import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
 
 if (!projectId) {
@@ -17,19 +17,6 @@ const metadata = {
     icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
 
-const appKit = createAppKit({
-    adapters: [wagmiAdapter],
-    projectId,
-    networks: networks,
-    metadata: metadata,
-    features: {
-        analytics: false,
-        swaps: false,
-    },
-    chainImages: {
-        [somniaTestnet.id]: 'https://shannon-explorer.somnia.network/assets/favicon/favicon-32x32.png',
-    }
-})
 
 
 interface AppKitProviderProps {
@@ -39,6 +26,32 @@ interface AppKitProviderProps {
 
 const AppKitProvider: FC<AppKitProviderProps> = ({ children, cookies }) => {
     const initialState = cookieToInitialState(wagmiAdapter.wagmiConfig as Config, cookies)
+    const [isReady, setIsReady] = useState(false);
+
+    useLayoutEffect(() => {
+        createAppKit({
+            adapters: [wagmiAdapter],
+            projectId,
+            networks: networks,
+            metadata: metadata,
+            features: {
+                analytics: false,
+                swaps: false,
+            },
+            chainImages: {
+                [somniaTestnet.id]: 'https://shannon-explorer.somnia.network/assets/favicon/favicon-32x32.png',
+            }
+        }).ready().then(() => {
+            setIsReady(true);
+        })
+
+    }, [])
+    if (!isReady) {
+        return (
+            <div>Loading...</div>
+        )
+    }
+
 
     return (
         <WagmiProvider config={wagmiAdapter.wagmiConfig as Config} initialState={initialState}>

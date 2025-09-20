@@ -1,14 +1,14 @@
 import { initTRPC } from "@trpc/server"
 import superjson from "superjson"
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch"
-import { JsonRpcProvider } from "ethers"
+import { RPC_PROVIDER } from "@/src/lib/evm-helper"
 
 export type CreateContextOptions = FetchCreateContextFnOptions
 
 export async function createTRPCContext(_opts: CreateContextOptions) {
   // Add auth/session/db connections to context here as needed
   return {
-    rpcProvider: new JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL),
+    rpcProvider: RPC_PROVIDER,
   }
 }
 

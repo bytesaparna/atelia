@@ -9,5 +9,6 @@ export { Cw20Contract__factory } from "./Cw20Contract__factory";
 export { Cw721Contract__factory } from "./Cw721Contract__factory";
 export { ExchangeContract__factory } from "./ExchangeContract__factory";
 export { KernelContract__factory } from "./KernelContract__factory";
+export { Multicall3__factory } from "./Multicall3__factory";
 export { SplitterContract__factory } from "./SplitterContract__factory";
 export { VfsContract__factory } from "./VfsContract__factory";
