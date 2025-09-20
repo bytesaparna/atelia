@@ -1,7 +1,7 @@
 {
     "name": "Hologram Luxe Dress",
     "description": "A futuristic A-line made from holographic fabric with an iridescent, light-reflective finish.",
-    "image": "/design-six.png",
+    "image": "https://atelia.vercel.app/design-six.png",
     "attributes": [
         {
             "trait_type": "collection",

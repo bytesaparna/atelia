@@ -1,7 +1,7 @@
 {
     "name": "Velour Eclipse Gown",
     "description": "A midnight-blue velvet evening gown with high slit, draped bodice, and beaded constellation accents.",
-    "image": "/design-eight.png",
+    "image": "https://atelia.vercel.app/design-eight.png",
     "attributes": [
         {
             "trait_type": "collection",

@@ -7,55 +7,31 @@ export function HowItWorks() {
   const steps = [
     {
       icon: Upload,
-      title: "Create & Upload Your Design",
-      description: "Upload your digital artwork and mint it as an NFT on the blockchain. Set your price.",
+      title: "Tokenize & Showcase Designs Globally",
+      description: "Designers worldwide can mint their digital artworks as NFTs, instantly showcasing their talent on a secure blockchain. Once minted, these design tokens appear on our platform for collectors and investors, creating global visibility and market traction. This unique exposure allows designers to gain recognition and attract investment from enthusiasts who value exclusive, one-of-a-kind creations.",
       step: "01",
     },
     {
       icon: Palette,
-      title: "Showcase Your Art on Exchange",
-      description: "Your NFT appears in our exchange platform where collectors can discover and appreciate your work by buying the shares.",
+      title: "Invest in Shares & Earn Returns",
+      description: "Collectors can purchase shares of these digital designs during the exchange period. Proceeds are primarily allocated to the designer, while a small platform fee ensures sustainable growth. This creates a transparent ecosystem where designers are rewarded fairly, and investors have the opportunity to profit from high-demand creative assets.",
       step: "02",
     },
     {
       icon: ShoppingCart,
-      title: "Buy & Sell of Shares",
-      description: "Purchase NFTs with cryptocurrency or sell shares of your collection to other enthusiasts worldwide on the exchage platform.",
+      title: "Auction for Premium Exposure",
+      description: "After the share-buying period ends, designs enter an auction phase, attracting brands and high-profile buyers. This process elevates the designer’s profile, allows brands to secure exclusive designs, and ensures maximum profitability for all stakeholders. Investors benefit from auction premiums proportional to their shareholdings.",
       step: "03",
     },
     {
       icon: TrendingUp,
-      title: "Auction",
-      description: "Auctions connect your creations with major brands. Winning bids not only reward you financially but also bring recognition, prestige, and stronger brand value.",
+      title: "Redeem Profits & Track Success",
+      description: "Shareholders can redeem profits earned from successful auctions, while designers connect directly with brands for collaboration and licensing opportunities. This creates a full-circle ecosystem where creativity is rewarded, investors profit, and designers gain global recognition and brand partnerships.",
       step: "04",
     },
-  ]
-  const stepsDescription = [
-    {
-      image: "/design-one.png",
-      title: "Create & Upload Your Design",
-      description: "Upload your digital artwork and mint it as an NFT on the blockchain. Set your price.",
-      step: "01",
-    },
-    {
-      image: "/design-two.png",
-      title: "Showcase Your Art on Exchange",
-      description: "Your NFT appears in our exchange platform where collectors can discover and appreciate your work by buying the shares.",
-      step: "02",
-    },
-    {
-      image: "/design-three.png",
-      title: "Buy & Sell of Shares",
-      description: "Purchase NFTs with cryptocurrency or sell shares of your collection to other enthusiasts worldwide on the exchage platform.",
-      step: "03",
-    },
-    {
-      image: "/design-four.png",
-      title: "Auction",
-      description: "Auctions connect your creations with major brands. Winning bids not only reward you financially but also bring recognition, prestige, and stronger brand value.",
-      step: "04",
-    },
-  ]
+  ];
+  
+ 
 
   return (
     <section className="py-24 px-4 bg-gradient-to-b from-background to-slate-900/20">
@@ -76,7 +52,7 @@ export function HowItWorks() {
             masterpieces.
           </p>
         </motion.div>
-        <div className="flex justify-between">
+        <div className="flex justify-between px-35">
           <div className="grid grid-rows-1 md:grid-rows-2 lg:grid-rows-4 gap-8">
             {steps.map((step, index) => (
               <motion.div
@@ -95,37 +71,12 @@ export function HowItWorks() {
                     <step.icon className="w-8 h-8 text-cyan-400" />
                   </div>
                   <h3 className="text-xl font-semibold text-white mb-4">{step.title}</h3>
-                  <p className="text-slate-300 leading-relaxed">{step.description}</p>
+                  {/* <p className="text-slate-300 leading-relaxed">{step.description}</p> */}
                 </div>
               </motion.div>
             ))}
           </div>
-          <div className="grid grid-rows-1 md:grid-rows-2 lg:grid-rows-4 gap-8">
-            {stepsDescription.map((step, index) => (
-              <motion.div
-                key={step.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="relative group max-w-lg"
-              >
-                <div className="backdrop-blur-sm h-full hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10">
-                  <div className="overflow-hidden rounded-full shadow-2xl shadow-black inline-block">
-                    <img
-                      src={step.image}
-                      width={600}
-                      height={1000}
-                      className="rounded-full"
-                    />
-                  </div>
-                  <p className="text-slate-300 leading-relaxed mt-4">
-                    {step.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          
         </div>
       </div>
     </section>

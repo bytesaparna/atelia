@@ -1,7 +1,7 @@
 {
     "name": "Golden Horizon Dress",
     "description": "A resort-ready chiffon dress with a gold-to-orange gradient, airy movement, and a one-shoulder silhouette.",
-    "image": "/design-five.png",
+    "image": "https://atelia.vercel.app/design-five.png",
     "attributes": [
         {
             "trait_type": "collection",

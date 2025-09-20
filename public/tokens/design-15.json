@@ -1,7 +1,7 @@
 {
     "name": "Starlight Reverie Dress",
     "description": "A shimmering silver gown that glows under light, with celestial beadwork and a flowing train.",
-    "image": "/design-fifteen.png",
+    "image": "https://atelia.vercel.app/design-fifteen.png",
     "attributes": [
         {
             "trait_type": "collection",

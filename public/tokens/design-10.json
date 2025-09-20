@@ -1,7 +1,7 @@
 {
     "name": "Golden Mirage Kaftan",
     "description": "A luxury desert-inspired kaftan with golden embroidery, silk fabric, and flowing sleeves.",
-    "image": "/design-ten.png",
+    "image": "https://atelia.vercel.app/design-ten.png",
     "attributes": [
         {
             "trait_type": "collection",

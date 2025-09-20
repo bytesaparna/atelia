@@ -1,7 +1,7 @@
 {
     "name": "Blush Horizon Dress",
     "description": "A pastel blush pink gown with gradient tones, layered skirt, and minimalistic elegance.",
-    "image": "/design-fourteen.png",
+    "image": "https://atelia.vercel.app/design-fourteen.png",
     "attributes": [
         {
             "trait_type": "collection",

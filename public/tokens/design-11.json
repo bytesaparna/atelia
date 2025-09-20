@@ -1,7 +1,7 @@
 {
     "name": "Scarlet Inferno Dress",
     "description": "A daring scarlet cocktail dress with asymmetrical hem, corset bodice, and flame-inspired embroidery.",
-    "image": "/design-eleven.png",
+    "image": "https://atelia.vercel.app/design-eleven.png",
     "attributes": [
         {
             "trait_type": "collection",

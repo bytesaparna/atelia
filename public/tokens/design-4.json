@@ -1,7 +1,7 @@
 {
     "name": "Fractal Flow Dress",
     "description": "An asymmetrical satin dress featuring emerald fractal-inspired prints and a dramatic high slit.",
-    "image": "/design-four.png",
+    "image": "https://atelia.vercel.app/design-four.png",
     "attributes": [
         {
             "trait_type": "collection",

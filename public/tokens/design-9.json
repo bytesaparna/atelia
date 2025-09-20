@@ -1,7 +1,7 @@
 {
     "name": "Aurora Mist Dress",
     "description": "A flowing chiffon dress inspired by northern lights, with ombré shades of green, purple, and blue.",
-    "image": "/design-nine.png",
+    "image": "https://atelia.vercel.app/design-nine.png",
     "attributes": [
         {
             "trait_type": "collection",

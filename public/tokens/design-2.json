@@ -1,7 +1,7 @@
 {
     "name": "Neon Nights Dress",
     "description": "A bold streetwear bodycon with electric pink and black tones, neon-highlighted fabric, and glow-in-the-dark accents.",
-    "image": "/design-two.png",
+    "image": "https://atelia.vercel.app/design-two.png",
     "attributes": [
         {
             "trait_type": "collection",

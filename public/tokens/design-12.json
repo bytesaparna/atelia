@@ -1,7 +1,7 @@
 {
     "name": "Ocean Whisper Gown",
     "description": "A seafoam green gown with wave-like pleats, pearl embellishments, and sheer flowing layers.",
-    "image": "/design-twelve.png",
+    "image": "https://atelia.vercel.app/design-twelve.png",
     "attributes": [
         {
             "trait_type": "collection",

@@ -1,7 +1,7 @@
 {
     "name": "Scarlet Flame Gown",
     "description": "A strapless mermaid gown in rich crimson velvet and silk with golden embroidery and dramatic flare.",
-    "image": "/design-seven.png",
+    "image": "https://atelia.vercel.app/design-seven.png",
     "attributes": [
         {
             "trait_type": "collection",

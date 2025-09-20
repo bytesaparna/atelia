@@ -136,13 +136,11 @@ export const queryTokenState = (token_id: number, provider = RPC_PROVIDER) => un
 
 
 export const fechTokenUri = unstable_cache(async (uri: string) => {
-    if (typeof window === "undefined") {
-        const tokenUri = await import(`/public/tokens${uri}.json`);
-        return tokenUri as TokenUri;
-    } else {
-        const tokenUri = await fetch(`/tokens${uri}.json`);
-        return await tokenUri.json() as TokenUri;
+    if (!uri.startsWith('https://')) {
+        uri = `https://atelia.vercel.app/tokens${uri}.json`
     }
+    const tokenUri = await fetch(uri);
+    return await tokenUri.json() as TokenUri;
 }, ["uri"], {
     revalidate: 60 * 60 * 24, // 24 hours
 })
