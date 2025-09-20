@@ -1,0 +1,43 @@
+{
+    "name": "Ocean Whisper Gown",
+    "description": "A seafoam green gown with wave-like pleats, pearl embellishments, and sheer flowing layers.",
+    "image": "/design-twelve.png",
+    "attributes": [
+        {
+            "trait_type": "collection",
+            "value": "Marine Elegance"
+        },
+        {
+            "trait_type": "category",
+            "value": "Evening Wear"
+        },
+        {
+            "trait_type": "color",
+            "value": "Seafoam Green"
+        },
+        {
+            "trait_type": "material",
+            "value": "Organza & Pearls"
+        },
+        {
+            "trait_type": "style",
+            "value": "Flowing, Off-Shoulder"
+        },
+        {
+            "trait_type": "unique features",
+            "value": "Wave-inspired pleating with pearl detailing"
+        },
+        {
+            "trait_type": "designer",
+            "value": "Elena Voss"
+        },
+        {
+            "trait_type": "platform",
+            "value": "Atelia"
+        },
+        {
+            "trait_type": "rarity",
+            "value": "Collector’s Drop"
+        }
+    ]
+}

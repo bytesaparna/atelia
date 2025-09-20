@@ -1,0 +1,43 @@
+{
+    "name": "Velour Eclipse Gown",
+    "description": "A midnight-blue velvet evening gown with high slit, draped bodice, and beaded constellation accents.",
+    "image": "/design-eight.png",
+    "attributes": [
+        {
+            "trait_type": "collection",
+            "value": "Celestial Nights"
+        },
+        {
+            "trait_type": "category",
+            "value": "Evening Wear"
+        },
+        {
+            "trait_type": "color",
+            "value": "Midnight Blue"
+        },
+        {
+            "trait_type": "material",
+            "value": "Velvet & Beads"
+        },
+        {
+            "trait_type": "style",
+            "value": "Draped, High Slit"
+        },
+        {
+            "trait_type": "unique features",
+            "value": "Hand-beaded constellation patterns"
+        },
+        {
+            "trait_type": "designer",
+            "value": "Isabelle Noire"
+        },
+        {
+            "trait_type": "platform",
+            "value": "Atelia"
+        },
+        {
+            "trait_type": "rarity",
+            "value": "Exclusive Run"
+        }
+    ]
+}

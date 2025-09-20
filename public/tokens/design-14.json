@@ -1,0 +1,43 @@
+{
+    "name": "Blush Horizon Dress",
+    "description": "A pastel blush pink gown with gradient tones, layered skirt, and minimalistic elegance.",
+    "image": "/design-fourteen.png",
+    "attributes": [
+        {
+            "trait_type": "collection",
+            "value": "Ethereal Shades"
+        },
+        {
+            "trait_type": "category",
+            "value": "Evening Wear"
+        },
+        {
+            "trait_type": "color",
+            "value": "Blush Pink Gradient"
+        },
+        {
+            "trait_type": "material",
+            "value": "Silk & Tulle"
+        },
+        {
+            "trait_type": "style",
+            "value": "Layered, Minimalist"
+        },
+        {
+            "trait_type": "unique features",
+            "value": "Soft gradient tones with flowing skirt"
+        },
+        {
+            "trait_type": "designer",
+            "value": "Hana Elise"
+        },
+        {
+            "trait_type": "platform",
+            "value": "Atelia"
+        },
+        {
+            "trait_type": "rarity",
+            "value": "Elegant Edition"
+        }
+    ]
+}

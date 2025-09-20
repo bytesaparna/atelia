@@ -1,0 +1,43 @@
+{
+    "name": "Golden Mirage Kaftan",
+    "description": "A luxury desert-inspired kaftan with golden embroidery, silk fabric, and flowing sleeves.",
+    "image": "/design-ten.png",
+    "attributes": [
+        {
+            "trait_type": "collection",
+            "value": "Sands of Time"
+        },
+        {
+            "trait_type": "category",
+            "value": "Luxury Resort"
+        },
+        {
+            "trait_type": "color",
+            "value": "Champagne Gold"
+        },
+        {
+            "trait_type": "material",
+            "value": "Silk & Metallic Thread"
+        },
+        {
+            "trait_type": "style",
+            "value": "Loose, Flowing"
+        },
+        {
+            "trait_type": "unique features",
+            "value": "Golden hand embroidery"
+        },
+        {
+            "trait_type": "designer",
+            "value": "Amira Dastan"
+        },
+        {
+            "trait_type": "platform",
+            "value": "Atelia"
+        },
+        {
+            "trait_type": "rarity",
+            "value": "Prestige Edition"
+        }
+    ]
+}

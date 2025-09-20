@@ -1,0 +1,43 @@
+{
+    "name": "Scarlet Inferno Dress",
+    "description": "A daring scarlet cocktail dress with asymmetrical hem, corset bodice, and flame-inspired embroidery.",
+    "image": "/design-eleven.png",
+    "attributes": [
+        {
+            "trait_type": "collection",
+            "value": "Elemental Passion"
+        },
+        {
+            "trait_type": "category",
+            "value": "Cocktail"
+        },
+        {
+            "trait_type": "color",
+            "value": "Scarlet Red"
+        },
+        {
+            "trait_type": "material",
+            "value": "Silk Satin"
+        },
+        {
+            "trait_type": "style",
+            "value": "Asymmetrical, Corset Bodice"
+        },
+        {
+            "trait_type": "unique features",
+            "value": "Flame-inspired hand embroidery"
+        },
+        {
+            "trait_type": "designer",
+            "value": "Diana Moretti"
+        },
+        {
+            "trait_type": "platform",
+            "value": "Atelia"
+        },
+        {
+            "trait_type": "rarity",
+            "value": "High Fashion Drop"
+        }
+    ]
+}

@@ -1,0 +1,43 @@
+{
+    "name": "Aurora Mist Dress",
+    "description": "A flowing chiffon dress inspired by northern lights, with ombré shades of green, purple, and blue.",
+    "image": "/design-nine.png",
+    "attributes": [
+        {
+            "trait_type": "collection",
+            "value": "Nature’s Radiance"
+        },
+        {
+            "trait_type": "category",
+            "value": "Evening Wear"
+        },
+        {
+            "trait_type": "color",
+            "value": "Aurora Ombré"
+        },
+        {
+            "trait_type": "material",
+            "value": "Chiffon & Silk"
+        },
+        {
+            "trait_type": "style",
+            "value": "Flowing, Sleeveless"
+        },
+        {
+            "trait_type": "unique features",
+            "value": "Color-changing fabric effect"
+        },
+        {
+            "trait_type": "designer",
+            "value": "Lina Arendt"
+        },
+        {
+            "trait_type": "platform",
+            "value": "Atelia"
+        },
+        {
+            "trait_type": "rarity",
+            "value": "Limited Edition"
+        }
+    ]
+}

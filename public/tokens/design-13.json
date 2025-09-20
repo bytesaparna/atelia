@@ -1,0 +1,43 @@
+{
+    "name": "Emerald Monarch Gown",
+    "description": "An opulent emerald velvet gown with gold embroidery, regal cape, and fitted silhouette.",
+    "image": "/design-thirteen.png",
+    "attributes": [
+        {
+            "trait_type": "collection",
+            "value": "Royal Heritage"
+        },
+        {
+            "trait_type": "category",
+            "value": "Couture"
+        },
+        {
+            "trait_type": "color",
+            "value": "Emerald Green"
+        },
+        {
+            "trait_type": "material",
+            "value": "Velvet & Gold Thread"
+        },
+        {
+            "trait_type": "style",
+            "value": "Fitted, Floor-Length with Cape"
+        },
+        {
+            "trait_type": "unique features",
+            "value": "Royal cape with golden embroidery"
+        },
+        {
+            "trait_type": "designer",
+            "value": "Marcella Duval"
+        },
+        {
+            "trait_type": "platform",
+            "value": "Atelia"
+        },
+        {
+            "trait_type": "rarity",
+            "value": "Royal Edition"
+        }
+    ]
+}

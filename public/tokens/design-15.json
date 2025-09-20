@@ -1,0 +1,43 @@
+{
+    "name": "Starlight Reverie Dress",
+    "description": "A shimmering silver gown that glows under light, with celestial beadwork and a flowing train.",
+    "image": "/design-fifteen.png",
+    "attributes": [
+        {
+            "trait_type": "collection",
+            "value": "Galactic Dreams"
+        },
+        {
+            "trait_type": "category",
+            "value": "Evening Wear"
+        },
+        {
+            "trait_type": "color",
+            "value": "Shimmering Silver"
+        },
+        {
+            "trait_type": "material",
+            "value": "Silk Chiffon & Sequins"
+        },
+        {
+            "trait_type": "style",
+            "value": "Flowing, Train with Open Back"
+        },
+        {
+            "trait_type": "unique features",
+            "value": "Celestial beadwork, glow effect under light"
+        },
+        {
+            "trait_type": "designer",
+            "value": "Aurora Leclair"
+        },
+        {
+            "trait_type": "platform",
+            "value": "Atelia"
+        },
+        {
+            "trait_type": "rarity",
+            "value": "Signature Piece"
+        }
+    ]
+}
