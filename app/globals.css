@@ -41,19 +41,25 @@
 
 .dark {
   /* Updated dark theme colors for NFT marketplace aesthetic */
-  --background: oklch(0.12 0.02 240); /* Deep dark blue-gray */
-  --foreground: oklch(0.98 0.01 240); /* Near white with slight blue tint */
-  --card: oklch(0.16 0.02 240); /* Slightly lighter dark cards */
+  --background: oklch(0.12 0.02 240);
+  /* Deep dark blue-gray */
+  --foreground: oklch(0.98 0.01 240);
+  /* Near white with slight blue tint */
+  --card: oklch(0.16 0.02 240);
+  /* Slightly lighter dark cards */
   --card-foreground: oklch(0.98 0.01 240);
   --popover: oklch(0.18 0.02 240);
   --popover-foreground: oklch(0.98 0.01 240);
-  --primary: oklch(0.65 0.18 195); /* Cyan primary color */
+  --primary: oklch(0.65 0.18 195);
+  /* Cyan primary color */
   --primary-foreground: oklch(0.98 0.01 240);
-  --secondary: oklch(0.62 0.16 160); /* Emerald secondary */
+  --secondary: oklch(0.62 0.16 160);
+  /* Emerald secondary */
   --secondary-foreground: oklch(0.98 0.01 240);
   --muted: oklch(0.25 0.02 240);
   --muted-foreground: oklch(0.65 0.02 240);
-  --accent: oklch(0.62 0.16 160); /* Emerald accent */
+  --accent: oklch(0.62 0.16 160);
+  /* Emerald accent */
   --accent-foreground: oklch(0.98 0.01 240);
   --destructive: oklch(0.55 0.22 25);
   --destructive-foreground: oklch(0.98 0.01 240);
@@ -120,7 +126,27 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+
+@keyframes pop {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  /* pop bigger at mid animation */
+}
+
+.pop-animation {
+  animation: pop 2s ease-in-out infinite;
 }

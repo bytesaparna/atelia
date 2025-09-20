@@ -23,6 +23,7 @@ const ExploreNFTs: FC<ExploreNFTsProps> = ({ nftCollections }) => {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [sortBy, setSortBy] = useState("trending")
+  const [isOpen, setIsOpen] = useState(false)
 
   const categories = useMemo(() => {
     return nftCollections.map(n => n.category).filter((category, index, self) => self.indexOf(category) === index)
@@ -50,6 +51,7 @@ const ExploreNFTs: FC<ExploreNFTsProps> = ({ nftCollections }) => {
         return b.likes + b.views - (a.likes + a.views)
     }
   })
+
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -182,7 +184,7 @@ const ExploreNFTs: FC<ExploreNFTsProps> = ({ nftCollections }) => {
                     />
                   </div>
                   <Button className="flex-1 w-full bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600">
-                    Buy Now
+                    <Link href={`/nft/${nft.id}/#buy-now-details`}>Buy Now</Link>
                   </Button>
                 </div>
               </CardContent>
@@ -236,7 +238,7 @@ const ExploreNFTs: FC<ExploreNFTsProps> = ({ nftCollections }) => {
                       className="flex-1"
                     />
                     <Button className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600">
-                      Buy Now
+                      <Link href={`/nft/${nft.id}/#buy-now-details`}>Buy Now</Link>
                     </Button>
                   </div>
                 </div>
@@ -261,6 +263,8 @@ const ExploreNFTs: FC<ExploreNFTsProps> = ({ nftCollections }) => {
           </Button>
         </div>
       )}
+
+
     </div>
   )
 }

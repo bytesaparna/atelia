@@ -33,7 +33,7 @@ export const queryTokenByIndex = (index: number) => unstable_cache(async (provid
     const tokens_address = await queryResolvePath(APP_CONFIG.token_address())();
     const contract = await getTokensContract(tokens_address, provider);
     const token = await contract.tokenByIndex(index);
-    return token
+    return Number(token)
 }, ["token_by_index", index.toString()], {
     revalidate: 60 * 60 * 24, // 24 hrs
 })
