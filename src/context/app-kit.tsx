@@ -4,6 +4,7 @@ import { somniaTestnet } from '@reown/appkit/networks';
 import { createAppKit } from "@reown/appkit/react";
 import { FC, useLayoutEffect, useState } from 'react';
 import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
+import { Loader } from '../components/loader';
 
 if (!projectId) {
     throw new Error('Project ID is not defined')
@@ -16,8 +17,6 @@ const metadata = {
     url: 'https://appkitexampleapp.com', // origin must match your domain & subdomain
     icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
-
-
 
 interface AppKitProviderProps {
     children: React.ReactNode
@@ -46,12 +45,18 @@ const AppKitProvider: FC<AppKitProviderProps> = ({ children, cookies }) => {
         })
 
     }, [])
+
     if (!isReady) {
         return (
-            <div>Loading...</div>
+            <div className='h-[100vh] flex items-center justify-center'>
+                <div
+                    className="max-w-xl w-full"
+                >
+                    <Loader text="ATELIA" automatic={true} />
+                </div>
+            </div>
         )
     }
-
 
     return (
         <WagmiProvider config={wagmiAdapter.wagmiConfig as Config} initialState={initialState}>
