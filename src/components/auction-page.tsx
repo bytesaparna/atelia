@@ -115,11 +115,10 @@ function AuctionCard({ auction }: { auction: NftCollection }) {
             <div className="space-y-3">
               <div className="flex gap-3">
                 <Input
-                  type="number"
                   placeholder={`Min bid: ${highest_price + auction.appStatus.min_raise_price} ${TOKEN_DENOM}`}
                   value={bidAmount}
                   onChange={(e) => setBidAmount(e.target.value)}
-                  className="flex-1"
+                  className="flex-1 border border-primary/20"
                   step="0.1"
                   min={highest_price + auction.appStatus.min_raise_price}
                 />
@@ -129,7 +128,7 @@ function AuctionCard({ auction }: { auction: NftCollection }) {
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground">
-                Minimum bid: {highest_price + auction.appStatus.min_raise_price} ${TOKEN_DENOM} (${(highest_price + auction.appStatus.min_raise_price * 1700).toLocaleString()} USD)
+                Minimum bid: {highest_price + auction.appStatus.min_raise_price} {TOKEN_DENOM} (${(highest_price + auction.appStatus.min_raise_price * 1700).toLocaleString()} USD)
               </p>
             </div>
           </CardContent>
