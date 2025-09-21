@@ -1,6 +1,9 @@
 import { CreateNFTForm } from "@/src/components/create-nft-form"
+import { RPC_PROVIDER } from "@/src/lib/evm-helper";
+import { queryNftCollections } from "@/src/server/api/collections/queries";
 
-export default function CreatePage() {
+export default async function CreatePage() {
+  const nftCollections = await queryNftCollections(RPC_PROVIDER);
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -11,7 +14,7 @@ export default function CreatePage() {
               Turn your digital art into a unique collectible on the blockchain
             </p>
           </div>
-          <CreateNFTForm />
+          <CreateNFTForm  nftCollection={nftCollections}/>
         </div>
       </div>
     </main>
