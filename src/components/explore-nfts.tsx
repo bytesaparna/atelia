@@ -159,7 +159,10 @@ const ExploreNFTs: FC<ExploreNFTsProps> = ({ nftCollections, isRedeem }) => {
                     </h3>
                   </Link>
                   <p className="text-sm text-muted-foreground">by {nft.creator}</p>
-
+                  <p className="text-sm text-muted-foreground">
+                    Expected return {" "}
+                    {(((nft.appStatus.min_bid_price - nft.appStatus.price_based_on_buy) / nft.appStatus.price_based_on_buy) * 100).toFixed(2)}{" "}%
+                  </p>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs text-muted-foreground">Price</p>
