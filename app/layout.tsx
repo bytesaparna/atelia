@@ -32,13 +32,13 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="dark">
+      <SpeedInsights />
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <AppKitProvider cookies={cookies}>
           <TRPCReactProvider>
             <Navigation />
             <Suspense fallback={null}>
               {children}
-              <SpeedInsights />
             </Suspense>
             <Analytics />
           </TRPCReactProvider>
