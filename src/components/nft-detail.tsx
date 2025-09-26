@@ -181,7 +181,7 @@ export function NFTDetail({ nft }: NFTDetailProps) {
                       onClick={handlePurchaseShare}
                     >
                       <Zap className="h-4 w-4 mr-2" />
-                      <Link href="#buy-now-details">Buy Now for {purchaseShareAmount * nft.appStatus.share_buy_price} {TOKEN_DENOM}</Link>
+                      Buy Now for {purchaseShareAmount * nft.appStatus.share_buy_price} {TOKEN_DENOM}
                     </PromiseButton>
                   </div>
                   <Countdown

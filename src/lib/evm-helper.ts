@@ -20,7 +20,6 @@ export const RPC_PROVIDER = createPublicClient({
 
 
 
-
 export const KERNEL_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_KERNEL_ADDRESS;
 export const KERNEL_CONTRACT = getContract({
     address: KERNEL_CONTRACT_ADDRESS as `0x${string}`,
@@ -79,11 +78,12 @@ export const getExchangeContract = cache(async (path: string, provider = RPC_PRO
     if (!path.startsWith("0x")) {
         exchange_address = await trpcClient.vfs.resolvePath.query({ path })
     }
-    return getContract({
+    const c =  getContract({
         address: exchange_address as `0x${string}`,
         abi: ExchangeContract__factory.abi,
         client: provider
     })
+    return c;
 })
 
 

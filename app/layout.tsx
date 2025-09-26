@@ -9,6 +9,7 @@ import "./globals.css"
 import { TRPCReactProvider } from "@/src/trpc/react"
 import AppKitProvider from "@/src/context/app-kit"
 import { headers } from "next/headers"
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 
 export const metadata: Metadata = {
@@ -37,6 +38,7 @@ export default async function RootLayout({
             <Navigation />
             <Suspense fallback={null}>
               {children}
+              <SpeedInsights />
             </Suspense>
             <Analytics />
           </TRPCReactProvider>
