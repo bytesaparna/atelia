@@ -23,15 +23,6 @@ import type {
   TypedContractMethod,
 } from "./common";
 
-export declare namespace RecipientLib {
-  export type RecipientStruct = { recipient: string; message: BytesLike };
-
-  export type RecipientStructOutput = [recipient: string, message: string] & {
-    recipient: string;
-    message: string;
-  };
-}
-
 export declare namespace IExchangeContract {
   export type DynamicExchangeRateStruct = { max_inflow_amount: BigNumberish };
 
@@ -134,6 +125,15 @@ export declare namespace AmpMsgLib {
   ] & { message: string; funds: bigint; ctx: AmpMsgLib.AmpPktCtxStructOutput };
 }
 
+export declare namespace RecipientLib {
+  export type RecipientStruct = { recipient: string; message: BytesLike };
+
+  export type RecipientStructOutput = [recipient: string, message: string] & {
+    recipient: string;
+    message: string;
+  };
+}
+
 export declare namespace AssetLib {
   export type ResolvedAssetStruct = { native: string; smart: AddressLike };
 
@@ -181,17 +181,16 @@ export interface ExchangeContractInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "UPGRADE_INTERFACE_VERSION"
-      | "_buy"
-      | "add_funds(uint256)"
-      | "add_funds((uint256))"
-      | "add_funds(uint256,(uint256))"
-      | "add_funds()"
+      | "add_funds_erc20"
+      | "add_funds_erc20_dynamic"
+      | "add_funds_native"
+      | "add_funds_native_dynamic"
       | "ado_type"
       | "ampReceive"
-      | "buy(uint256,(string,bytes))"
-      | "buy()"
-      | "buy(uint256)"
-      | "buy((string,bytes))"
+      | "buy_with_erc20"
+      | "buy_with_erc20_with_recipient"
+      | "buy_with_native"
+      | "buy_with_native_with_recipient"
       | "cancel_sale"
       | "config"
       | "implementation"
@@ -210,24 +209,20 @@ export interface ExchangeContractInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "_buy",
-    values: [BigNumberish, RecipientLib.RecipientStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "add_funds(uint256)",
+    functionFragment: "add_funds_erc20",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "add_funds((uint256))",
-    values: [IExchangeContract.DynamicExchangeRateStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "add_funds(uint256,(uint256))",
+    functionFragment: "add_funds_erc20_dynamic",
     values: [BigNumberish, IExchangeContract.DynamicExchangeRateStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "add_funds()",
+    functionFragment: "add_funds_native",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "add_funds_native_dynamic",
+    values: [IExchangeContract.DynamicExchangeRateStruct]
   ): string;
   encodeFunctionData(functionFragment: "ado_type", values?: undefined): string;
   encodeFunctionData(
@@ -235,16 +230,19 @@ export interface ExchangeContractInterface extends Interface {
     values: [AmpMsgLib.AmpPktStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "buy(uint256,(string,bytes))",
-    values: [BigNumberish, RecipientLib.RecipientStruct]
-  ): string;
-  encodeFunctionData(functionFragment: "buy()", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "buy(uint256)",
+    functionFragment: "buy_with_erc20",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "buy((string,bytes))",
+    functionFragment: "buy_with_erc20_with_recipient",
+    values: [BigNumberish, RecipientLib.RecipientStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "buy_with_native",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "buy_with_native_with_recipient",
     values: [RecipientLib.RecipientStruct]
   ): string;
   encodeFunctionData(
@@ -274,36 +272,38 @@ export interface ExchangeContractInterface extends Interface {
     functionFragment: "UPGRADE_INTERFACE_VERSION",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "_buy", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "add_funds(uint256)",
+    functionFragment: "add_funds_erc20",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "add_funds((uint256))",
+    functionFragment: "add_funds_erc20_dynamic",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "add_funds(uint256,(uint256))",
+    functionFragment: "add_funds_native",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "add_funds()",
+    functionFragment: "add_funds_native_dynamic",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "ado_type", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ampReceive", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "buy(uint256,(string,bytes))",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "buy()", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "buy(uint256)",
+    functionFragment: "buy_with_erc20",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "buy((string,bytes))",
+    functionFragment: "buy_with_erc20_with_recipient",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "buy_with_native",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "buy_with_native_with_recipient",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -418,25 +418,13 @@ export interface ExchangeContract extends BaseContract {
 
   UPGRADE_INTERFACE_VERSION: TypedContractMethod<[], [string], "view">;
 
-  _buy: TypedContractMethod<
-    [amount: BigNumberish, recipient: RecipientLib.RecipientStruct],
-    [bigint],
-    "payable"
-  >;
-
-  "add_funds(uint256)": TypedContractMethod<
+  add_funds_erc20: TypedContractMethod<
     [amount: BigNumberish],
     [void],
     "nonpayable"
   >;
 
-  "add_funds((uint256))": TypedContractMethod<
-    [dynamic_exchange_rate: IExchangeContract.DynamicExchangeRateStruct],
-    [void],
-    "payable"
-  >;
-
-  "add_funds(uint256,(uint256))": TypedContractMethod<
+  add_funds_erc20_dynamic: TypedContractMethod<
     [
       amount: BigNumberish,
       dynamic_exchange_rate: IExchangeContract.DynamicExchangeRateStruct
@@ -445,7 +433,13 @@ export interface ExchangeContract extends BaseContract {
     "nonpayable"
   >;
 
-  "add_funds()": TypedContractMethod<[], [void], "payable">;
+  add_funds_native: TypedContractMethod<[], [void], "payable">;
+
+  add_funds_native_dynamic: TypedContractMethod<
+    [dynamic_exchange_rate: IExchangeContract.DynamicExchangeRateStruct],
+    [void],
+    "payable"
+  >;
 
   ado_type: TypedContractMethod<
     [],
@@ -459,21 +453,21 @@ export interface ExchangeContract extends BaseContract {
     "payable"
   >;
 
-  "buy(uint256,(string,bytes))": TypedContractMethod<
-    [amount: BigNumberish, recipient: RecipientLib.RecipientStruct],
-    [bigint],
-    "nonpayable"
-  >;
-
-  "buy()": TypedContractMethod<[], [bigint], "payable">;
-
-  "buy(uint256)": TypedContractMethod<
+  buy_with_erc20: TypedContractMethod<
     [amount: BigNumberish],
     [bigint],
-    "nonpayable"
+    "payable"
   >;
 
-  "buy((string,bytes))": TypedContractMethod<
+  buy_with_erc20_with_recipient: TypedContractMethod<
+    [amount: BigNumberish, recipient: RecipientLib.RecipientStruct],
+    [bigint],
+    "payable"
+  >;
+
+  buy_with_native: TypedContractMethod<[], [bigint], "payable">;
+
+  buy_with_native_with_recipient: TypedContractMethod<
     [recipient: RecipientLib.RecipientStruct],
     [bigint],
     "payable"
@@ -517,24 +511,10 @@ export interface ExchangeContract extends BaseContract {
     nameOrSignature: "UPGRADE_INTERFACE_VERSION"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "_buy"
-  ): TypedContractMethod<
-    [amount: BigNumberish, recipient: RecipientLib.RecipientStruct],
-    [bigint],
-    "payable"
-  >;
-  getFunction(
-    nameOrSignature: "add_funds(uint256)"
+    nameOrSignature: "add_funds_erc20"
   ): TypedContractMethod<[amount: BigNumberish], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "add_funds((uint256))"
-  ): TypedContractMethod<
-    [dynamic_exchange_rate: IExchangeContract.DynamicExchangeRateStruct],
-    [void],
-    "payable"
-  >;
-  getFunction(
-    nameOrSignature: "add_funds(uint256,(uint256))"
+    nameOrSignature: "add_funds_erc20_dynamic"
   ): TypedContractMethod<
     [
       amount: BigNumberish,
@@ -544,8 +524,15 @@ export interface ExchangeContract extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "add_funds()"
+    nameOrSignature: "add_funds_native"
   ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "add_funds_native_dynamic"
+  ): TypedContractMethod<
+    [dynamic_exchange_rate: IExchangeContract.DynamicExchangeRateStruct],
+    [void],
+    "payable"
+  >;
   getFunction(
     nameOrSignature: "ado_type"
   ): TypedContractMethod<
@@ -557,20 +544,20 @@ export interface ExchangeContract extends BaseContract {
     nameOrSignature: "ampReceive"
   ): TypedContractMethod<[packet: AmpMsgLib.AmpPktStruct], [void], "payable">;
   getFunction(
-    nameOrSignature: "buy(uint256,(string,bytes))"
+    nameOrSignature: "buy_with_erc20"
+  ): TypedContractMethod<[amount: BigNumberish], [bigint], "payable">;
+  getFunction(
+    nameOrSignature: "buy_with_erc20_with_recipient"
   ): TypedContractMethod<
     [amount: BigNumberish, recipient: RecipientLib.RecipientStruct],
     [bigint],
-    "nonpayable"
+    "payable"
   >;
   getFunction(
-    nameOrSignature: "buy()"
+    nameOrSignature: "buy_with_native"
   ): TypedContractMethod<[], [bigint], "payable">;
   getFunction(
-    nameOrSignature: "buy(uint256)"
-  ): TypedContractMethod<[amount: BigNumberish], [bigint], "nonpayable">;
-  getFunction(
-    nameOrSignature: "buy((string,bytes))"
+    nameOrSignature: "buy_with_native_with_recipient"
   ): TypedContractMethod<
     [recipient: RecipientLib.RecipientStruct],
     [bigint],

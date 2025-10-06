@@ -6,7 +6,6 @@ import { Button } from "@/src/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Badge } from "@/src/components/ui/badge"
 import { Heart, Share2, Flag, Eye, TrendingUp, Clock, User, Zap, ExternalLink } from "lucide-react"
-import Link from "next/link"
 import { NftCollection, TokenState } from "../types/collections"
 import { Countdown } from "./ui/countdown"
 import { TOKEN_DENOM } from "../config/app-config"
@@ -14,6 +13,10 @@ import { api } from "../trpc/clients"
 import { Input } from "./ui/input"
 import { Progress } from "./ui/progress"
 import { PromiseButton } from "./promise-button"
+import { getExchangeContract } from "../lib/evm-helper"
+import { BrowserProvider, parseEther } from 'ethers';
+import { Provider, useAppKitProvider } from "@reown/appkit/react"
+import { ExchangeContract__factory } from "../contract-types"
 
 interface NFTDetailProps {
   nft: NftCollection
@@ -23,11 +26,22 @@ export function NFTDetail({ nft }: NFTDetailProps) {
   const [isLiked, setIsLiked] = useState(false)
   const [activeTab, setActiveTab] = useState("details")
   const [purchaseShareAmount, setPurchaseShareAmount] = useState<number>(1)
-  const [payAmount, setPayAmount] = useState<number>(0)
-  const { data: sharesData } = api.exchange.buyConfig.useQuery({ token_id: nft.id })
-  const handlePurchaseShare = () => {
-    console.log("CLICKED")
-    console.log(payAmount, "PAYAMOUNT")
+  const { data: sharesData } = api.exchange.buyConfig.useQuery({ token_id: nft.id });
+
+  const { walletProvider } = useAppKitProvider<Provider>("eip155");
+  const handlePurchaseShare = async (shares_amount: number) => {
+    const ethersProvider = new BrowserProvider(walletProvider);
+    const signer = await ethersProvider.getSigner();
+
+    const contract = ExchangeContract__factory.connect(nft.appStatus.buy_exchange_address, signer);
+    const value = shares_amount * nft.appStatus.share_buy_price;
+    const sender = signer.address as `0x${string}`;
+    console.log(value, sender);
+    const tx = await contract.buy_with_native({
+      value: parseEther(value.toString()),
+    });
+    await tx.wait();
+    console.log(tx.hash, "Success");
   }
 
   return (
@@ -173,12 +187,11 @@ export function NFTDetail({ nft }: NFTDetailProps) {
                           const maxVal = sharesData?.amount ?? 0
                           const clampedVal = Math.max(0, Math.min(val, maxVal)) // clamp value
                           setPurchaseShareAmount(clampedVal)
-                          setPayAmount(clampedVal * nft.appStatus.share_buy_price)
                         }}
                       />
                     </div>
                     <PromiseButton id="buy-now-details" disabled={nft.appStatus.state !== TokenState.BUY} className="flex-1 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600"
-                      onClick={handlePurchaseShare}
+                      onClick={() => handlePurchaseShare(purchaseShareAmount)}
                     >
                       <Zap className="h-4 w-4 mr-2" />
                       Buy Now for {purchaseShareAmount * nft.appStatus.share_buy_price} {TOKEN_DENOM}

@@ -96,8 +96,8 @@ export interface Cw721ContractInterface extends Interface {
       | "implementation"
       | "initialize"
       | "isApprovedForAll"
-      | "mint(address,uint256)"
-      | "mint(address,uint256,string)"
+      | "mint"
+      | "mint_with_uri"
       | "minter"
       | "name"
       | "ownerOf"
@@ -165,11 +165,11 @@ export interface Cw721ContractInterface extends Interface {
     values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "mint(address,uint256)",
+    functionFragment: "mint",
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "mint(address,uint256,string)",
+    functionFragment: "mint_with_uri",
     values: [AddressLike, BigNumberish, string]
   ): string;
   encodeFunctionData(functionFragment: "minter", values?: undefined): string;
@@ -257,12 +257,9 @@ export interface Cw721ContractInterface extends Interface {
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "mint(address,uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "mint(address,uint256,string)",
+    functionFragment: "mint_with_uri",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "minter", data: BytesLike): Result;
@@ -505,13 +502,13 @@ export interface Cw721Contract extends BaseContract {
     "view"
   >;
 
-  "mint(address,uint256)": TypedContractMethod<
+  mint: TypedContractMethod<
     [to: AddressLike, tokenId: BigNumberish],
     [void],
     "nonpayable"
   >;
 
-  "mint(address,uint256,string)": TypedContractMethod<
+  mint_with_uri: TypedContractMethod<
     [to: AddressLike, tokenId: BigNumberish, token_uri: string],
     [void],
     "nonpayable"
@@ -651,14 +648,14 @@ export interface Cw721Contract extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "mint(address,uint256)"
+    nameOrSignature: "mint"
   ): TypedContractMethod<
     [to: AddressLike, tokenId: BigNumberish],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "mint(address,uint256,string)"
+    nameOrSignature: "mint_with_uri"
   ): TypedContractMethod<
     [to: AddressLike, tokenId: BigNumberish, token_uri: string],
     [void],

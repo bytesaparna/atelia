@@ -118,8 +118,8 @@ export interface SplitterContractInterface extends Interface {
       | "implementation"
       | "initialize"
       | "proxiableUUID"
-      | "send(uint256,(string,string),((string,bytes),uint256)[])"
-      | "send(((string,bytes),uint256)[])"
+      | "send_erc20"
+      | "send_native"
       | "upgradeToAndCall"
       | "version"
   ): FunctionFragment;
@@ -150,7 +150,7 @@ export interface SplitterContractInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "send(uint256,(string,string),((string,bytes),uint256)[])",
+    functionFragment: "send_erc20",
     values: [
       BigNumberish,
       AssetLib.AssetStruct,
@@ -158,7 +158,7 @@ export interface SplitterContractInterface extends Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "send(((string,bytes),uint256)[])",
+    functionFragment: "send_native",
     values: [SplitterContractStorage.SplitterConfigStruct[]]
   ): string;
   encodeFunctionData(
@@ -182,12 +182,9 @@ export interface SplitterContractInterface extends Interface {
     functionFragment: "proxiableUUID",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "send_erc20", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "send(uint256,(string,string),((string,bytes),uint256)[])",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "send(((string,bytes),uint256)[])",
+    functionFragment: "send_native",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -310,7 +307,7 @@ export interface SplitterContract extends BaseContract {
 
   proxiableUUID: TypedContractMethod<[], [string], "view">;
 
-  "send(uint256,(string,string),((string,bytes),uint256)[])": TypedContractMethod<
+  send_erc20: TypedContractMethod<
     [
       amount: BigNumberish,
       asset: AssetLib.AssetStruct,
@@ -320,7 +317,7 @@ export interface SplitterContract extends BaseContract {
     "nonpayable"
   >;
 
-  "send(((string,bytes),uint256)[])": TypedContractMethod<
+  send_native: TypedContractMethod<
     [config: SplitterContractStorage.SplitterConfigStruct[]],
     [void],
     "payable"
@@ -369,7 +366,7 @@ export interface SplitterContract extends BaseContract {
     nameOrSignature: "proxiableUUID"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "send(uint256,(string,string),((string,bytes),uint256)[])"
+    nameOrSignature: "send_erc20"
   ): TypedContractMethod<
     [
       amount: BigNumberish,
@@ -380,7 +377,7 @@ export interface SplitterContract extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "send(((string,bytes),uint256)[])"
+    nameOrSignature: "send_native"
   ): TypedContractMethod<
     [config: SplitterContractStorage.SplitterConfigStruct[]],
     [void],
