@@ -37,8 +37,11 @@ export function NFTDetail({ nft }: NFTDetailProps) {
     if (!address) {
       toast.error("Connect wallet to start purchasing", {
         style: {
-          background: "linear-gradient(to right, #22d3ee, #34d399)",
+          background: "rgba(255, 87, 34, 0.8)",
           color: "white",
+          border: "1px solid rgba(249, 115, 22, 0.3)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)"
         },
         position: "top-right",
       })
@@ -58,8 +61,11 @@ export function NFTDetail({ nft }: NFTDetailProps) {
       console.log(tx.hash, "Success");
       toast.success("Shares purchased successfully", {
         style: {
-          background: "linear-gradient(to right, #22d3ee, #34d399)",
+          background: "linear-gradient(to right, rgba(34, 211, 238, 0.8), rgba(52, 211, 153, 0.8))",
           color: "white",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
         },
         position: "top-right",
       })
@@ -67,25 +73,23 @@ export function NFTDetail({ nft }: NFTDetailProps) {
         particleCount: 80,
         spread: 70,
         origin: { y: 0.6 },
-        colors: [
-          "#22d3ee", // cyan-400 (base)
-          "#34d399", // emerald-400 (base)
-          "#06b6d4", // cyan-500 - richer cyan
-          "#10b981", // emerald-500 - deeper green
-          "#99f6e4", // cyan-200 - soft highlight
-          "#a7f3d0", // emerald-200 - soft highlight
-          "#ecfeff", // sky-50 - subtle white-blue accent
-          "#d1fae5", // green-100 - pastel balance
-        ]
+        colors: ["#22d3ee", "#34d399", "#06b6d4", "#10b981", "#99f6e4", "#a7f3d0", "#ecfeff", "#d1fae5"]
       })
       // invalidate server-side cache
       await invalidateCache.mutateAsync({ token_id: nft.id.toString() });
-      // ✅ Invalidate query so sharesData refetches
+      // Invalidate query so sharesData refetches
       await utils.exchange.buyConfig.invalidate({ token_id: nft.id });
     } catch (error) {
       console.log("Error:", error)
       toast.error("Error purchasing shares", {
         position: "top-right",
+        style: {
+          background: "rgba(255, 87, 34, 0.8)",
+          color: "white",
+          border: "1px solid rgba(249, 115, 22, 0.3)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)"
+        },
       })
     }
   }

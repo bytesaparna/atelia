@@ -6,18 +6,24 @@ import { Button } from "@/src/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Input } from "@/src/components/ui/input"
 import { Badge } from "@/src/components/ui/badge"
-import { Clock, Gavel, TrendingUp, Zap, Heart, Eye, User } from "lucide-react"
+import { Clock, Gavel, TrendingUp, Zap, Heart, Eye, User, Nfc } from "lucide-react"
 import Link from "next/link"
 import { NftCollection } from "../types/collections"
 import { Countdown } from "./ui/countdown"
 import { TOKEN_DENOM } from "../config/app-config"
 import { api } from "../trpc/clients"
-import { formatUnits } from "ethers"
+import { BrowserProvider, formatUnits, parseEther } from "ethers"
+import { useAppKitAccount, useAppKitProvider, Provider } from "@reown/appkit/react"
+import { toast } from "sonner"
+import { AuctionContract__factory } from "../contract-types"
 
 
 function AuctionCard({ auction }: { auction: NftCollection }) {
-  const [bidAmount, setBidAmount] = useState("")
+  const [bidAmount, setBidAmount] = useState<number>(1)
   const [isLiked, setIsLiked] = useState(false);
+  const { address } = useAppKitAccount()
+  const { walletProvider } = useAppKitProvider<Provider>("eip155");
+  const utils = api.useUtils();
 
   const { data: highestBidder } = api.auction.highestBid.useQuery({
     token_id: auction.id
@@ -25,6 +31,53 @@ function AuctionCard({ auction }: { auction: NftCollection }) {
 
   const highest_price = highestBidder?.high_bidder_amount || auction.appStatus.min_bid_price
 
+  const handlePlaceBid = async (amount: number) => {
+    if (!address) {
+      toast.error("Connect wallet to start bidding", {
+        style: {
+          background: "rgba(255, 87, 34, 0.8)",
+          color: "white",
+          border: "1px solid rgba(249, 115, 22, 0.3)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)"
+        },
+        position: "top-right",
+      })
+      return
+    }
+    try {
+      const ethersProvider = new BrowserProvider(walletProvider)
+      const signer = await ethersProvider.getSigner();
+      console.log(auction.appStatus.auction_start_time, auction.appStatus.auction_end_time, "Auction Start Time");
+      const contract = AuctionContract__factory.connect(auction.appStatus.auction_address, signer)
+      const bidValue = parseEther(bidAmount.toString())
+      // Send the transaction
+      const tx = await contract["bid(uint256)"](auction.id, { value: bidValue });
+      await tx.wait()
+      toast.success("Bid placed successfully!", {
+        style: {
+          background: "linear-gradient(to right, #22d3ee, #34d399)",
+          color: "white",
+        },
+        position: "top-right",
+      })
+      // Refresh the highest bid data
+      await utils.auction.highestBid.invalidate({ token_id: auction.id })
+    } catch (error: any) {
+      console.error("Error placing bid:", error)
+      const reason = error?.reason ?? error.message
+      toast.error(reason || "Error placing bid", {
+        position: "top-right",
+        style: {
+          background: "rgba(255, 87, 34, 0.8)",
+          color: "white",
+          border: "1px solid rgba(249, 115, 22, 0.3)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)"
+        },
+      })
+    }
+  }
 
   return (
     <motion.div
@@ -117,12 +170,12 @@ function AuctionCard({ auction }: { auction: NftCollection }) {
                 <Input
                   placeholder={`Min bid: ${highest_price + auction.appStatus.min_raise_price} ${TOKEN_DENOM}`}
                   value={bidAmount}
-                  onChange={(e) => setBidAmount(e.target.value)}
+                  onChange={(e) => setBidAmount(Number(e.target.value))}
                   className="flex-1 border border-primary/20"
                   step="0.1"
                   min={highest_price + auction.appStatus.min_raise_price}
                 />
-                <Button className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600">
+                <Button className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600" onClick={() => handlePlaceBid(bidAmount)}>
                   <Gavel className="h-4 w-4 mr-2" />
                   Place Bid
                 </Button>
