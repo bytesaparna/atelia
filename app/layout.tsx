@@ -10,6 +10,7 @@ import { TRPCReactProvider } from "@/src/trpc/react"
 import AppKitProvider from "@/src/context/app-kit"
 import { headers } from "next/headers"
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Toaster } from "sonner"
 
 
 export const metadata: Metadata = {
@@ -38,6 +39,7 @@ export default async function RootLayout({
           <TRPCReactProvider>
             <Navigation />
             <Suspense fallback={null}>
+              <Toaster />
               {children}
             </Suspense>
             <Analytics />

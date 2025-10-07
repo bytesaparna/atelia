@@ -13,10 +13,11 @@ import { api } from "../trpc/clients"
 import { Input } from "./ui/input"
 import { Progress } from "./ui/progress"
 import { PromiseButton } from "./promise-button"
-import { getExchangeContract } from "../lib/evm-helper"
 import { BrowserProvider, parseEther } from 'ethers';
-import { Provider, useAppKitProvider } from "@reown/appkit/react"
+import { Provider, useAppKitAccount, useAppKitProvider } from "@reown/appkit/react"
 import { ExchangeContract__factory } from "../contract-types"
+import { toast } from "sonner"
+import confetti from "canvas-confetti"
 
 interface NFTDetailProps {
   nft: NftCollection
@@ -27,21 +28,66 @@ export function NFTDetail({ nft }: NFTDetailProps) {
   const [activeTab, setActiveTab] = useState("details")
   const [purchaseShareAmount, setPurchaseShareAmount] = useState<number>(1)
   const { data: sharesData } = api.exchange.buyConfig.useQuery({ token_id: nft.id });
-
   const { walletProvider } = useAppKitProvider<Provider>("eip155");
-  const handlePurchaseShare = async (shares_amount: number) => {
-    const ethersProvider = new BrowserProvider(walletProvider);
-    const signer = await ethersProvider.getSigner();
+  const { address } = useAppKitAccount()
+  const utils = api.useUtils()
+  const invalidateCache = api.exchange.invalidateSharesCache.useMutation();
 
-    const contract = ExchangeContract__factory.connect(nft.appStatus.buy_exchange_address, signer);
-    const value = shares_amount * nft.appStatus.share_buy_price;
-    const sender = signer.address as `0x${string}`;
-    console.log(value, sender);
-    const tx = await contract.buy_with_native({
-      value: parseEther(value.toString()),
-    });
-    await tx.wait();
-    console.log(tx.hash, "Success");
+  const handlePurchaseShare = async (shares_amount: number) => {
+    if (!address) {
+      toast.error("Connect wallet to start purchasing", {
+        style: {
+          background: "linear-gradient(to right, #22d3ee, #34d399)",
+          color: "white",
+        },
+        position: "top-right",
+      })
+      return
+    }
+    try {
+      const ethersProvider = new BrowserProvider(walletProvider);
+      const signer = await ethersProvider.getSigner();
+      const contract = ExchangeContract__factory.connect(nft.appStatus.buy_exchange_address, signer);
+      const value = shares_amount * nft.appStatus.share_buy_price;
+      const sender = signer.address as `0x${string}`;
+      console.log(value, sender);
+      const tx = await contract.buy_with_native({
+        value: parseEther(value.toString()),
+      });
+      await tx.wait();
+      console.log(tx.hash, "Success");
+      toast.success("Shares purchased successfully", {
+        style: {
+          background: "linear-gradient(to right, #22d3ee, #34d399)",
+          color: "white",
+        },
+        position: "top-right",
+      })
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: [
+          "#22d3ee", // cyan-400 (base)
+          "#34d399", // emerald-400 (base)
+          "#06b6d4", // cyan-500 - richer cyan
+          "#10b981", // emerald-500 - deeper green
+          "#99f6e4", // cyan-200 - soft highlight
+          "#a7f3d0", // emerald-200 - soft highlight
+          "#ecfeff", // sky-50 - subtle white-blue accent
+          "#d1fae5", // green-100 - pastel balance
+        ]
+      })
+      // invalidate server-side cache
+      await invalidateCache.mutateAsync({ token_id: nft.id.toString() });
+      // ✅ Invalidate query so sharesData refetches
+      await utils.exchange.buyConfig.invalidate({ token_id: nft.id });
+    } catch (error) {
+      console.log("Error:", error)
+      toast.error("Error purchasing shares", {
+        position: "top-right",
+      })
+    }
   }
 
   return (
@@ -173,12 +219,12 @@ export function NFTDetail({ nft }: NFTDetailProps) {
                 </div>
 
                 <div className="flex justify-between gap-6 w-full">
-                  <div className="flex flex-1 flex-col gap-2">
+                  <div className="flex flex-col gap-2">
                     <p className="text-xs text-gray-400">Shares to buy</p>
                     <div>
                       <Input
                         placeholder="1"
-                        className=" pr-16 border-1 border-emerald-400/50 !bg-transparent"
+                        className="pr-16 border-1 border-emerald-400/50 !bg-transparent"
                         value={purchaseShareAmount}
                         max={sharesData?.amount}
                         min={1}
@@ -190,11 +236,11 @@ export function NFTDetail({ nft }: NFTDetailProps) {
                         }}
                       />
                     </div>
-                    <PromiseButton id="buy-now-details" disabled={nft.appStatus.state !== TokenState.BUY} className="flex-1 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600"
+                    <PromiseButton id="buy-now-details" disabled={nft.appStatus.state !== TokenState.BUY} className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600"
                       onClick={() => handlePurchaseShare(purchaseShareAmount)}
                     >
                       <Zap className="h-4 w-4 mr-2" />
-                      Buy Now for {purchaseShareAmount * nft.appStatus.share_buy_price} {TOKEN_DENOM}
+                      Buy Now for {(purchaseShareAmount * nft.appStatus.share_buy_price).toFixed(6)} {TOKEN_DENOM}
                     </PromiseButton>
                   </div>
                   <Countdown

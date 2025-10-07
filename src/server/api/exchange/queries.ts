@@ -1,5 +1,5 @@
 import { getExchangeContract, RPC_PROVIDER } from "@/src/lib/evm-helper";
-import { ethers, formatUnits } from "ethers";
+import { formatUnits } from "ethers";
 import { unstable_cache } from "next/cache";
 import { queryResolvePath } from "../vfs/queries";
 import { APP_CONFIG } from "@/src/config/app-config";
@@ -11,7 +11,8 @@ export const queryBuyExchangeConfig = (token_id: number, provider = RPC_PROVIDER
     return config;
 
 }, ["buy-exchange", "config", "token_id", token_id.toString()], {
-    revalidate: 60 * 60 * 24, // 5 minutes
+    tags: [`buy-exchange-${token_id}`,`buy-exchange`],
+    revalidate: 60 * 60 * 24, // 24 hours
 })
 
 export const queryRedeemExchangeConfig = (token_id: number, provider = RPC_PROVIDER) => unstable_cache(async () => {
@@ -20,7 +21,7 @@ export const queryRedeemExchangeConfig = (token_id: number, provider = RPC_PROVI
     return config;
 
 }, ["redeem-exchange", "config", "token_id", token_id.toString()], {
-    revalidate: 60 * 60 * 24, // 5 minutes
+    revalidate: 60 * 60 * 24, // 24 hours
 })
 
 
