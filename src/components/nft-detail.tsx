@@ -76,7 +76,7 @@ export function NFTDetail({ nft }: NFTDetailProps) {
         colors: ["#22d3ee", "#34d399", "#06b6d4", "#10b981", "#99f6e4", "#a7f3d0", "#ecfeff", "#d1fae5"]
       })
       // invalidate server-side cache
-      await invalidateCache.mutateAsync({ token_id: nft.id.toString() });
+      await invalidateCache.mutateAsync({ token_id: nft.id });
       // Invalidate query so sharesData refetches
       await utils.exchange.buyConfig.invalidate({ token_id: nft.id });
     } catch (error) {

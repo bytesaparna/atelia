@@ -127,6 +127,7 @@ export const queryTokenState = (token_id: number, provider = RPC_PROVIDER) => un
         auction_start_time: Number(auctionStatus.start_time),
         auction_end_time: Number(auctionStatus.end_time),
         redeem_start_time: Number(exchangeConfig.start_time),
+        latest_auction_id: auctionStatus.latest_auction_id
     }
     return state;
 }, ["token", "state", "token_id", token_id.toString()], {

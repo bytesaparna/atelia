@@ -16,7 +16,8 @@ export const queryLatestAuctionState = (token_id: number, provider = RPC_PROVIDE
         min_raise: state.min_raise,
         recipient: state.recipient,
         bid_asset: state.bid_asset,
-        owner: state.owner
+        owner: state.owner,
+        latest_auction_id:state.latest_auction_id
     }
 }, ["auction", "latest_auction_state", "token_id", token_id.toString()], {
     revalidate: 60 * 60 * 24, // 24 hrs
@@ -29,6 +30,7 @@ export const queryLatestAuctionBidders = (token_id: number, provider = RPC_PROVI
         high_bidder_address: state.high_bidder_address
     }
 }, ["auction", "latest_auction_bidder", "token_id", token_id.toString()], {
+    tags: [`latest_auction_bidder${token_id}`],
     revalidate: 60 * 5, // 5 minutes
 })
 
@@ -48,7 +50,8 @@ const cachedLatestAuctionState = (token_id: number, provider = RPC_PROVIDER) => 
         bid_asset: state.bid_asset,
         owner: state.owner,
         high_bidder_amount: Number(formatUnits(state.high_bidder_amount, "ether")),
-        high_bidder_address: state.high_bidder_addr
+        high_bidder_address: state.high_bidder_addr,
+        latest_auction_id:Number(state.auction_id)
     }
 }, ["auction", "latest_auction_bidder", "token_id", token_id.toString()], {
     revalidate: 60 * 5, // 5 minutes

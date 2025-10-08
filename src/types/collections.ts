@@ -48,5 +48,6 @@ export interface ITokenState {
     buy_end_time: number;
     auction_start_time: number;
     auction_end_time: number;
+    latest_auction_id: number;
     redeem_start_time: number;
 }

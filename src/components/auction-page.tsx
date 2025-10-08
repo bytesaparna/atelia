@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, FC } from "react"
+import { useState, FC } from "react"
 import { motion } from "motion/react"
 import { Button } from "@/src/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
@@ -12,24 +12,28 @@ import { NftCollection } from "../types/collections"
 import { Countdown } from "./ui/countdown"
 import { TOKEN_DENOM } from "../config/app-config"
 import { api } from "../trpc/clients"
-import { BrowserProvider, formatUnits, parseEther } from "ethers"
+import { BrowserProvider, parseEther } from "ethers"
 import { useAppKitAccount, useAppKitProvider, Provider } from "@reown/appkit/react"
 import { toast } from "sonner"
 import { AuctionContract__factory } from "../contract-types"
+import { PromiseButton } from "./promise-button"
+import confetti from "canvas-confetti"
 
 
-function AuctionCard({ auction }: { auction: NftCollection }) {
-  const [bidAmount, setBidAmount] = useState<number>(1)
+
+function AuctionCard({ nft }: { nft: NftCollection }) {
+  const [bidAmount, setBidAmount] = useState("1")
   const [isLiked, setIsLiked] = useState(false);
   const { address } = useAppKitAccount()
   const { walletProvider } = useAppKitProvider<Provider>("eip155");
   const utils = api.useUtils();
 
   const { data: highestBidder } = api.auction.highestBid.useQuery({
-    token_id: auction.id
+    token_id: nft.id
   })
+  const invalidateHighestBidderCache = api.auction.invalidateHighestBidCache.useMutation()
 
-  const highest_price = highestBidder?.high_bidder_amount || auction.appStatus.min_bid_price
+  const highest_price = highestBidder?.high_bidder_amount || nft.appStatus.min_bid_price
 
   const handlePlaceBid = async (amount: number) => {
     if (!address) {
@@ -48,21 +52,31 @@ function AuctionCard({ auction }: { auction: NftCollection }) {
     try {
       const ethersProvider = new BrowserProvider(walletProvider)
       const signer = await ethersProvider.getSigner();
-      console.log(auction.appStatus.auction_start_time, auction.appStatus.auction_end_time, "Auction Start Time");
-      const contract = AuctionContract__factory.connect(auction.appStatus.auction_address, signer)
-      const bidValue = parseEther(bidAmount.toString())
+      console.log(nft.appStatus.auction_start_time, nft.appStatus.auction_end_time, "Auction Start Time");
+      const contract = AuctionContract__factory.connect(nft.appStatus.auction_address, signer)
+      const bidValue = parseEther(amount.toString())
       // Send the transaction
-      const tx = await contract["bid(uint256)"](auction.id, { value: bidValue });
+      const tx = await contract["bid(uint256)"](nft.appStatus.latest_auction_id, { value: bidValue });
       await tx.wait()
       toast.success("Bid placed successfully!", {
         style: {
-          background: "linear-gradient(to right, #22d3ee, #34d399)",
+          background: "linear-gradient(to right, rgba(34, 211, 238, 0.8), rgba(52, 211, 153, 0.8))",
           color: "white",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
         },
         position: "top-right",
       })
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ["#22d3ee", "#34d399", "#06b6d4", "#10b981", "#99f6e4", "#a7f3d0", "#ecfeff", "#d1fae5"]
+      })
+      await invalidateHighestBidderCache.mutateAsync({ token_id: nft.id })
       // Refresh the highest bid data
-      await utils.auction.highestBid.invalidate({ token_id: auction.id })
+      await utils.auction.highestBid.invalidate({ token_id: nft.id })
     } catch (error: any) {
       console.error("Error placing bid:", error)
       const reason = error?.reason ?? error.message
@@ -89,7 +103,7 @@ function AuctionCard({ auction }: { auction: NftCollection }) {
       {/* NFT Image */}
       <div className="relative">
         <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 shadow-2xl">
-          <img src={auction.image || "/placeholder.svg"} alt={auction.title} className="w-full h-full object-cover" />
+          <img src={nft.image || "/placeholder.svg"} alt={nft.title} className="w-full h-full object-cover" />
         </div>
 
         {/* Quick Stats */}
@@ -101,11 +115,11 @@ function AuctionCard({ auction }: { auction: NftCollection }) {
             className={`flex items-center gap-2 ${isLiked ? "text-red-500 border-red-500" : ""}`}
           >
             <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
-            {auction.likes + (isLiked ? 1 : 0)}
+            {nft.likes + (isLiked ? 1 : 0)}
           </Button>
           <div className="flex items-center gap-2 px-3 py-1 bg-muted rounded-md">
             <Eye className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm">{auction.views.toLocaleString()}</span>
+            <span className="text-sm">{nft.views.toLocaleString()}</span>
           </div>
         </div>
       </div>
@@ -114,10 +128,10 @@ function AuctionCard({ auction }: { auction: NftCollection }) {
       <div className="space-y-6">
         <div>
           <Badge variant="secondary" className="mb-3">
-            {auction.category}
+            {nft.category}
           </Badge>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{auction.title}</h1>
-          <p className="text-muted-foreground text-lg leading-relaxed">{auction.description}</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{nft.title}</h1>
+          <p className="text-muted-foreground text-lg leading-relaxed">{nft.description}</p>
         </div>
 
         {/* Creator Info */}
@@ -129,7 +143,7 @@ function AuctionCard({ auction }: { auction: NftCollection }) {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Creator</p>
-                <p className="font-semibold">{auction.creator}</p>
+                <p className="font-semibold">{nft.creator}</p>
               </div>
             </div>
           </CardContent>
@@ -145,7 +159,7 @@ function AuctionCard({ auction }: { auction: NftCollection }) {
           </CardHeader>
           <CardContent>
             <Countdown
-              targetDate={auction.appStatus.auction_end_time}
+              targetDate={nft.appStatus.auction_end_time}
               className="flex-1"
             />
           </CardContent>
@@ -159,29 +173,47 @@ function AuctionCard({ auction }: { auction: NftCollection }) {
                 <p className="text-sm text-muted-foreground mb-1">Current Bid</p>
                 <p className="text-3xl font-bold text-primary">{highest_price}</p>
               </div>
-              <div className="text-right">
+              {/* <div className="text-right">
                 <p className="text-sm text-muted-foreground">Starting Bid</p>
-                <p className="text-lg font-semibold">{auction.appStatus.min_bid_price}</p>
+                <p className="text-lg font-semibold">{nft.appStatus.min_bid_price}</p>
+              </div> */}
+              <div className="text-right">
+                <p className="text-sm text-muted-foreground">Highest Bidder Address</p>
+                <p
+                  className="text-base font-semibold cursor-pointer select-text max-w-[180px] truncate hover:text-primary"
+                  title={highestBidder?.high_bidder_address ?? ""}
+                  onClick={() => {
+                    if (highestBidder?.high_bidder_address) {
+                      navigator.clipboard.writeText(highestBidder.high_bidder_address);
+                    }
+                  }}
+                >
+                  {highestBidder ? `${highestBidder?.high_bidder_address.slice(0, 6)}....${highestBidder?.high_bidder_address.slice(-6)}` : "No Bids Yet"}
+                </p>
               </div>
+
             </div>
 
             <div className="space-y-3">
               <div className="flex gap-3">
                 <Input
-                  placeholder={`Min bid: ${highest_price + auction.appStatus.min_raise_price} ${TOKEN_DENOM}`}
+                  placeholder={`Min bid: ${highest_price + nft.appStatus.min_raise_price} ${TOKEN_DENOM}`}
                   value={bidAmount}
-                  onChange={(e) => setBidAmount(Number(e.target.value))}
+                  onChange={(e) => setBidAmount(e.target.value)}
                   className="flex-1 border border-primary/20"
                   step="0.1"
-                  min={highest_price + auction.appStatus.min_raise_price}
+                  min={highest_price + nft.appStatus.min_raise_price}
                 />
-                <Button className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600" onClick={() => handlePlaceBid(bidAmount)}>
+                <PromiseButton className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600"
+                  onClick={() => handlePlaceBid(Number(bidAmount))}
+                  disabled={Number(bidAmount) < (highest_price + nft.appStatus.min_raise_price)}
+                >
                   <Gavel className="h-4 w-4 mr-2" />
                   Place Bid
-                </Button>
+                </PromiseButton>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Minimum bid: {highest_price + auction.appStatus.min_raise_price} {TOKEN_DENOM} (${(highest_price + auction.appStatus.min_raise_price * 1700).toLocaleString()} USD)
+              <p className={`text-sm  ${Number(bidAmount) < (highest_price + nft.appStatus.min_raise_price) ? "text-orange-600" : "text-muted-foreground"} `}>
+                Minimum bid: {(highest_price + nft.appStatus.min_raise_price).toFixed(6)} {TOKEN_DENOM} (${(highest_price + nft.appStatus.min_raise_price * 1700).toLocaleString()} USD)
               </p>
             </div>
           </CardContent>
@@ -261,7 +293,7 @@ const AuctionPage: FC<AuctionPageProps> = ({ nftCollection }) => {
 
 
         {nftCollection[selectedAuction] ? (
-          <AuctionCard auction={nftCollection[selectedAuction]} />
+          <AuctionCard nft={nftCollection[selectedAuction]} />
         ) : (
           <div className="text-center">
             <p className="text-muted-foreground">No auction selected</p>
