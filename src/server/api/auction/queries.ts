@@ -3,6 +3,7 @@ import { ethers, formatUnits } from "ethers";
 import { unstable_cache } from "next/cache";
 import { queryResolvePath } from "../vfs/queries";
 import { APP_CONFIG } from "@/src/config/app-config";
+import { queryAllTokens } from "../collections/queries";
 
 
 export const queryLatestAuctionState = (token_id: number, provider = RPC_PROVIDER) => unstable_cache(async () => {
@@ -17,7 +18,7 @@ export const queryLatestAuctionState = (token_id: number, provider = RPC_PROVIDE
         recipient: state.recipient,
         bid_asset: state.bid_asset,
         owner: state.owner,
-        latest_auction_id:state.latest_auction_id
+        latest_auction_id: state.latest_auction_id
     }
 }, ["auction", "latest_auction_state", "token_id", token_id.toString()], {
     revalidate: 60 * 60 * 24, // 24 hrs
@@ -31,6 +32,14 @@ export const queryLatestAuctionBidders = (token_id: number, provider = RPC_PROVI
     }
 }, ["auction", "latest_auction_bidder", "token_id", token_id.toString()], {
     tags: [`latest_auction_bidder${token_id}`],
+    revalidate: 60 * 5, // 5 minutes
+})
+
+export const queryLatestAuctionBiddersForProvidedTokens = (tokens: number[], provider = RPC_PROVIDER) => unstable_cache(async () => {
+    const bids = await Promise.all(tokens.map(token => queryLatestAuctionBidders(token, provider)()))
+    const bidAmounts = bids.map(bid => bid.high_bidder_amount)
+    return bidAmounts
+}, ["auction", "latest_auction_bidders_batch", tokens.sort().join(',')], {
     revalidate: 60 * 5, // 5 minutes
 })
 
@@ -51,7 +60,7 @@ const cachedLatestAuctionState = (token_id: number, provider = RPC_PROVIDER) => 
         owner: state.owner,
         high_bidder_amount: Number(formatUnits(state.high_bidder_amount, "ether")),
         high_bidder_address: state.high_bidder_addr,
-        latest_auction_id:Number(state.auction_id)
+        latest_auction_id: Number(state.auction_id)
     }
 }, ["auction", "latest_auction_bidder", "token_id", token_id.toString()], {
     revalidate: 60 * 5, // 5 minutes

@@ -1,5 +1,5 @@
 import { APP_CONFIG } from "@/src/config/app-config";
-import { getCurrentTimeInMilliseconds, getTokensContract, RPC_PROVIDER } from "@/src/lib/evm-helper";
+import { getCurrentTimeInMilliseconds, getSharesContract, getTokensContract, RPC_PROVIDER } from "@/src/lib/evm-helper";
 import { ITokenState, NftCollection, TokenState, TokenUri } from "@/src/types/collections";
 import { ethers } from "ethers";
 import { unstable_cache } from "next/cache";
@@ -144,4 +144,34 @@ export const fechTokenUri = unstable_cache(async (uri: string) => {
     return await tokenUri.json() as TokenUri;
 }, ["uri"], {
     revalidate: 60 * 60 * 24, // 24 hours
+})
+
+
+// given and nft id and user address, return the user's share balance of the nft
+const queryUserShareBalanceOfNft = unstable_cache(async (token_id: number, userAddress: string, provider = RPC_PROVIDER) => {
+    const shares_address = await queryResolvePath(APP_CONFIG.shares_address(token_id))()
+    const shares_contract = await getSharesContract(shares_address, provider)
+    const balance = await shares_contract.read.balanceOf([userAddress as `0x${string}`])
+    return Number(balance)
+}, ["user_share_balance"], {
+    revalidate: 60 * 5, // 5min
+})
+
+// given a user address, return the user's share balance of all nfts
+export const queryUserShareBalanceOfAllNfts = unstable_cache(async (userAddress: string, provider = RPC_PROVIDER) => {
+    const tokens = await queryAllTokens(provider)
+    const balances = await Promise.all(tokens.map(async (token_id) => {
+        const balance = await queryUserShareBalanceOfNft(token_id, userAddress, provider)
+        if (balance === 0) return null
+        return {
+            token_id,
+            balance,
+            token: await queryNftCollection(token_id, provider)()
+        }
+    }))
+    // Filter out null values (NFTs with 0 balance)
+    const filteredBalances = balances.filter((item): item is NonNullable<typeof item> => item !== null)
+    return filteredBalances
+}, ["user_share_balances_all"], {
+    revalidate: 60 * 5,
 })

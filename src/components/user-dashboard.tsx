@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Button } from "@/src/components/ui/button"
 import { Badge } from "@/src/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
 import { Progress } from "@/src/components/ui/progress"
-import { Eye, Heart, Plus, Edit3, Share2, MoreHorizontal, Calendar, Award, Users, DollarSign } from "lucide-react"
+import { Eye, Heart, Plus, Edit3, Share2, MoreHorizontal, Calendar, Award, Users, DollarSign, ExternalLink } from "lucide-react"
 import {
   LineChart,
   Line,
@@ -22,6 +22,11 @@ import {
   Pie,
   Cell,
 } from "recharts"
+import { api } from "../trpc/clients"
+import { useAppKitAccount } from "@reown/appkit/react"
+import Link from "next/link"
+import { TOKEN_DENOM } from "../config/app-config"
+import { useQuery } from "@tanstack/react-query"
 
 const userStats = {
   totalEarnings: "45.7",
@@ -50,38 +55,6 @@ const categoryData = [
   { name: "Other", value: 10, color: "#f59e0b" },
 ]
 
-const userNFTs = [
-  {
-    id: 1,
-    title: "Cosmic Dreams #001",
-    price: "3.2",
-    image: "/cosmic-digital-art-with-nebula-and-stars.jpg",
-    status: "listed",
-    views: 234,
-    likes: 45,
-    created: "2 days ago",
-  },
-  {
-    id: 2,
-    title: "Neon Cityscape",
-    price: "2.8",
-    image: "/cyberpunk-neon-city.png",
-    status: "sold",
-    views: 189,
-    likes: 32,
-    created: "1 week ago",
-  },
-  {
-    id: 3,
-    title: "Abstract Flow",
-    price: "1.5",
-    image: "/abstract-geometric-digital-art-colorful.jpg",
-    status: "draft",
-    views: 0,
-    likes: 0,
-    created: "3 days ago",
-  },
-]
 
 const recentActivity = [
   { type: "sale", description: "Neon Cityscape sold for 2.8 STT", time: "2 hours ago" },
@@ -90,9 +63,21 @@ const recentActivity = [
   { type: "mint", description: "Abstract Flow minted successfully", time: "3 days ago" },
 ]
 
+
 export function UserDashboard() {
   const [activeTab, setActiveTab] = useState("overview")
+  const { address } = useAppKitAccount()
+  const { data: userShareBalanceOfAllNfts } = api.collections.userSharesBalanceOfAllNfts.useQuery({ userAddress: address ?? "", })
+  console.log(userShareBalanceOfAllNfts, "User share balance of all nfts")
+  const tokens = userShareBalanceOfAllNfts?.map(item => item.token) ?? []
+  const userShareBalance = userShareBalanceOfAllNfts?.map(item => item.balance) ?? []
+  const tokenIds = userShareBalanceOfAllNfts?.map(item => item.token_id) ?? []
 
+  const { data: highestBids } = api.auction.queryLatestAuctionBiddersForProvidedTokens.useQuery({ tokens: tokenIds })
+  console.log(highestBids, "Highest bids (batch)")
+
+  const { data: highestBid } = api.auction.highestBid.useQuery({ token_id: tokenIds[0] })
+  console.log(highestBid, "Highest bid (single - for comparison)")
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Profile Header */}
@@ -302,58 +287,64 @@ export function UserDashboard() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {userNFTs.map((nft) => (
-              <Card key={nft.id} className="border-border/50 hover:border-cyan-400/50 transition-all duration-300">
+            {tokens.map((nft, index) => (
+              <Card
+                key={nft.id}
+                className="group border-border/50 hover:border-cyan-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-400/10 pt-0"
+              >
                 <CardContent className="p-0">
-                  <div className="relative">
-                    <img
-                      src={nft.image || "/placeholder.svg"}
-                      alt={nft.title}
-                      className="w-full h-48 object-cover rounded-t-lg"
-                    />
-                    <Badge
-                      className={`absolute top-2 right-2 ${nft.status === "listed"
-                          ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
-                          : nft.status === "sold"
-                            ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
-                            : "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
-                        }`}
-                    >
-                      {nft.status}
-                    </Badge>
-                  </div>
+                  <Link href={`/nft/${nft.id}`}>
+                    <div className="relative overflow-hidden rounded-t-lg cursor-pointer">
+                      <img
+                        src={nft.thumbnail || "/placeholder.svg"}
+                        alt={nft.title}
+                        className="w-full h-88 object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute top-2 right-2">
+                        <a href={`https://shannon-explorer.somnia.network/token/${nft.contract_address}/instance/${nft.id}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                          <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 text-white">
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        </a>
+                      </div>
+                      {nft.verified && (
+                        <Badge className="absolute top-2 left-2 bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
+                          Verified
+                        </Badge>
+                      )}
+                    </div>
+                  </Link>
 
                   <div className="p-4 space-y-3">
-                    <div>
-                      <h3 className="font-semibold text-foreground">{nft.title}</h3>
-                      <p className="text-sm text-muted-foreground">Created {nft.created}</p>
-                    </div>
-
+                    <Link href={`/nft/${nft.id}`}>
+                      <h3 className="font-semibold text-foreground group-hover:text-cyan-400 transition-colors cursor-pointer">
+                        {nft.title}
+                      </h3>
+                    </Link>
+                    <p className="text-sm text-muted-foreground">by {nft.creator}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Expected return {" "}
+                      {(((Number(highestBids?.[index]) - nft.appStatus.price_based_on_buy) / nft.appStatus.price_based_on_buy) * 100).toFixed(2)}{" "}%
+                    </p>
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-xs text-muted-foreground">Price</p>
-                        <p className="font-semibold text-foreground">{nft.price} STT</p>
+                        <p className="text-xs text-muted-foreground">Your Balance</p>
+                        <p className="font-semibold text-foreground">{userShareBalance[index]} {TOKEN_DENOM}</p>
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Eye className="h-3 w-3" />
-                          {nft.views}
-                        </div>
+                      {/* <div className="flex items-center gap-3 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Heart className="h-3 w-3" />
                           {nft.likes}
                         </div>
-                      </div>
+                        <div className="flex items-center gap-1">
+                          <Eye className="h-3 w-3" />
+                          {nft.views}
+                        </div>
+                      </div> */}
                     </div>
-
-                    <div className="flex gap-2">
-                      <Button variant="outline" className="flex-1 bg-transparent">
-                        Edit
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <Button className="flex-1 w-full bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600">
+                      <Link href={`/nft/${nft.id}/#buy-now-details`}>Redeem</Link>
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -443,12 +434,12 @@ export function UserDashboard() {
                   >
                     <div
                       className={`p-2 rounded-full ${activity.type === "sale"
-                          ? "bg-emerald-500/20"
-                          : activity.type === "like"
-                            ? "bg-red-500/20"
-                            : activity.type === "follow"
-                              ? "bg-blue-500/20"
-                              : "bg-purple-500/20"
+                        ? "bg-emerald-500/20"
+                        : activity.type === "like"
+                          ? "bg-red-500/20"
+                          : activity.type === "follow"
+                            ? "bg-blue-500/20"
+                            : "bg-purple-500/20"
                         }`}
                     >
                       {activity.type === "sale" && <DollarSign className="h-4 w-4 text-emerald-400" />}

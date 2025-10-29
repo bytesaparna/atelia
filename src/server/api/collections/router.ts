@@ -1,5 +1,5 @@
 import { createTRPCRouter, publicProcedure } from "../trpc";
-import { fechTokenUri, queryAllTokens, queryNftCollection, queryNftCollections, queryTokenState } from "./queries";
+import { fechTokenUri, queryAllTokens, queryNftCollection, queryNftCollections, queryTokenState, queryUserShareBalanceOfAllNfts } from "./queries";
 import { z } from "zod";
 
 export const collectionsRouter = createTRPCRouter({
@@ -34,4 +34,7 @@ export const collectionsRouter = createTRPCRouter({
     fechTokenUri: publicProcedure.input(z.object({ uri: z.string() })).query(({ input }) =>
         fechTokenUri(input.uri)
     ),
+    userSharesBalanceOfAllNfts: publicProcedure.input(z.object({ userAddress: z.string() })).query(({ input, ctx }) =>
+        queryUserShareBalanceOfAllNfts(input.userAddress, ctx.rpcProvider)
+    )
 });
