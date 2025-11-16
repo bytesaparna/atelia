@@ -15,6 +15,10 @@ import { Progress } from "@/src/components/ui/progress"
 import { NftCollection } from "../types/collections"
 import { motion } from "framer-motion"
 import { Duration, DurationSelector } from "./ui/duration-selector"
+import { BrowserProvider } from "ethers"
+import { useAppKitProvider, Provider } from "@reown/appkit/react"
+import { Cw721Contract__factory } from "../contract-types"
+import { toast } from "sonner"
 
 
 interface CreatePageProps {
@@ -29,22 +33,24 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
 
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
-  const [previewImage, setPreviewImage] = useState<string | null>(null)
+  // const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [properties, setProperties] = useState<Array<{ trait_type: string; value: string }>>([])
   const [sharesBuyDuration, setSharesBuyDuration] = useState<Duration>({ days: 10, hours: 0, minutes: 0 });
   const [auctionDuration, setAuctionDuration] = useState<Duration>({ days: 0, hours: 2, minutes: 30 });
   const [betweenDuration, setBetweenDuration] = useState<Duration>({ days: 1, hours: 0, minutes: 0 });
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setPreviewImage(e.target?.result as string)
-      }
-      reader.readAsDataURL(file)
-    }
-  }
+  const { walletProvider } = useAppKitProvider<Provider>("eip155")
+
+  // const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files?.[0]
+  //   if (file) {
+  //     const reader = new FileReader()
+  //     reader.onload = (e) => {
+  //       setPreviewImage(e.target?.result as string)
+  //     }
+  //     reader.readAsDataURL(file)
+  //   }
+  // }
 
   const addProperty = () => {
     setProperties([...properties, { trait_type: "", value: "" }])
@@ -77,6 +83,80 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
     }, 200)
   }
 
+
+  const handleDesignTokenize = async () => {
+    if (!walletProvider) {
+      toast.error("Please connect your wallet", {
+        style: {
+          background: "rgba(255, 87, 34, 0.8)",
+          color: "white",
+          border: "1px solid rgba(249, 115, 22, 0.3)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)"
+        },
+        position: "top-right",
+      })
+      return
+    }
+
+    try {
+      setIsUploading(true)
+      const ethersProvider = new BrowserProvider(walletProvider)
+      const signer = await ethersProvider.getSigner()
+      const userAddress = signer.address
+      const cw721Contract = Cw721Contract__factory.connect(nftCollection[selectedDesing].contract_address, signer)
+
+      // Check if the user is the authorized minter
+      const minterResponse = await cw721Contract.minter()
+      console.log(minterResponse.minter, "Minter Address")
+      const minterAddress = minterResponse.minter as `0x${string}`
+
+      // Proceed with minting
+      const tx = await cw721Contract.mint(userAddress, nftCollection[selectedDesing].id)
+      console.log("Transaction sent:", tx)
+
+      // Wait for transaction confirmation
+      await tx.wait()
+
+      toast.success("NFT minted successfully!", {
+        style: {
+          background: "linear-gradient(to right, rgba(34, 211, 238, 0.8), rgba(52, 211, 153, 0.8))",
+          color: "white",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+        },
+        position: "top-right",
+      })
+      console.log("Minting successful:", tx.hash)
+    } catch (error: any) {
+      console.error("Error in handleDesignTokenize", error)
+
+      // Extract error message
+      let errorMessage = "Failed to mint NFT"
+      if (error?.reason) {
+        errorMessage = error.reason
+      } else if (error?.message) {
+        errorMessage = error.message
+      } else if (typeof error === "string") {
+        errorMessage = error
+      }
+
+      toast.error(errorMessage, {
+        style: {
+          background: "rgba(255, 87, 34, 0.8)",
+          color: "white",
+          border: "1px solid rgba(249, 115, 22, 0.3)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)"
+        },
+        position: "top-right",
+      })
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-10">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -106,7 +186,7 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
                   <div>
                     <p className="text-foreground font-medium">Choose design to upload</p>
                   </div>
-                  <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="file-upload" />
+                  <input type="file" accept="image/*" className="hidden" id="file-upload" />
                 </div>
               )}
             </CardContent>
@@ -248,8 +328,8 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
 
             <div className="pt-4 border-t border-border/50">
               <Button
-                onClick={handleMint}
-                disabled={isUploading || !previewImage}
+                onClick={handleDesignTokenize}
+                disabled={isUploading}
                 className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 disabled:opacity-50"
               >
                 {isUploading ? (

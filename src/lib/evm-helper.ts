@@ -2,9 +2,8 @@ import { BigNumberish, ethers } from "ethers"
 import { AuctionContract__factory, Cw20Contract__factory, Cw721Contract__factory, ExchangeContract__factory, KernelContract__factory, Multicall3__factory, VfsContract__factory } from "../contract-types";
 import { trpcClient } from "../trpc/clients";
 import { cache } from "react";
-import { createPublicClient, getContract, http } from "viem"
+import { createPublicClient, createWalletClient, getContract, http } from "viem"
 import { somniaTestnet } from "viem/chains";
-
 
 
 const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL
@@ -18,6 +17,14 @@ export const RPC_PROVIDER = createPublicClient({
     }
 })
 
+export const getWalletSigner = async () => {
+    const privateKey = process.env.WALLET_PRIVATE_KEY
+    if (!privateKey) {
+        throw new Error("Wallet Private Key is not set")
+    }
+    const provider = new ethers.JsonRpcProvider(RPC_URL)
+    return new ethers.Wallet(privateKey, provider)
+}
 
 
 export const KERNEL_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_KERNEL_ADDRESS;
@@ -78,7 +85,7 @@ export const getExchangeContract = cache(async (path: string, provider = RPC_PRO
     if (!path.startsWith("0x")) {
         exchange_address = await trpcClient.vfs.resolvePath.query({ path })
     }
-    const c =  getContract({
+    const c = getContract({
         address: exchange_address as `0x${string}`,
         abi: ExchangeContract__factory.abi,
         client: provider

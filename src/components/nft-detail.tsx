@@ -33,6 +33,23 @@ export function NFTDetail({ nft }: NFTDetailProps) {
   const utils = api.useUtils()
   const invalidateCache = api.exchange.invalidateSharesCache.useMutation();
 
+  const buySharesMutation = api.exchange.buyShares.useMutation()
+
+
+
+  const handlePurchaseShareWithSigner = async (shares_amount: number) => {
+    try {
+      const value = shares_amount * nft.appStatus.share_buy_price;
+      const tx = await buySharesMutation.mutateAsync({
+        address: nft.appStatus.buy_exchange_address,
+        amount: value.toString()
+      })
+      console.log(tx, "Transaction")
+    } catch (error) {
+      console.log("Error:", error)
+    }
+  }
+
   const handlePurchaseShare = async (shares_amount: number) => {
     if (!address) {
       toast.error("Connect wallet to start purchasing", {
@@ -241,7 +258,7 @@ export function NFTDetail({ nft }: NFTDetailProps) {
                       />
                     </div>
                     <PromiseButton id="buy-now-details" disabled={nft.appStatus.state !== TokenState.BUY} className="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600"
-                      onClick={() => handlePurchaseShare(purchaseShareAmount)}
+                      onClick={() => handlePurchaseShareWithSigner(purchaseShareAmount)}
                     >
                       <Zap className="h-4 w-4 mr-2" />
                       Buy Now for {(purchaseShareAmount * nft.appStatus.share_buy_price).toFixed(6)} {TOKEN_DENOM}

@@ -6,5 +6,6 @@ declare namespace NodeJS {
         NEXT_PUBLIC_VFS_ADDRESS: string;
         NEXT_PUBLIC_RPC_URL: string;
         NEXT_PUBLIC_OWNER_ADDRESS: string;
+        WALLET_PRIVATE_KEY: string;
     }
 }
