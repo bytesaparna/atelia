@@ -21,10 +21,10 @@ export const exchangeRouter = createTRPCRouter({
                 const exchangeContract = ExchangeContract__factory.connect(input.address, signer)
                 const tx = await exchangeContract.buy_with_native({ value: parseEther(input.amount) })
                 console.log(tx.hash, "Transaction Hash")
-                return { success: true }
+                return { success: true, transactionHash: tx.hash }
             } catch (error) {
                 console.error(error)
-                return { success: false }
+                return { success: false, transactionHash: null }
             }
         })
 })

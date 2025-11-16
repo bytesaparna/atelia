@@ -40,11 +40,11 @@ export function NFTDetail({ nft }: NFTDetailProps) {
   const handlePurchaseShareWithSigner = async (shares_amount: number) => {
     try {
       const value = shares_amount * nft.appStatus.share_buy_price;
-      const tx = await buySharesMutation.mutateAsync({
+      const {success, transactionHash} = await buySharesMutation.mutateAsync({
         address: nft.appStatus.buy_exchange_address,
         amount: value.toString()
       })
-      console.log(tx, "Transaction")
+      console.log(transactionHash, "Transaction")
     } catch (error) {
       console.log("Error:", error)
     }
