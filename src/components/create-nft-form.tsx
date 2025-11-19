@@ -19,6 +19,8 @@ import { BrowserProvider } from "ethers"
 import { useAppKitProvider, Provider } from "@reown/appkit/react"
 import { Cw721Contract__factory } from "../contract-types"
 import { toast } from "sonner"
+import { api } from "../trpc/clients"
+import { useAccount } from "wagmi"
 
 
 interface CreatePageProps {
@@ -40,6 +42,8 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
   const [betweenDuration, setBetweenDuration] = useState<Duration>({ days: 1, hours: 0, minutes: 0 });
 
   const { walletProvider } = useAppKitProvider<Provider>("eip155")
+  const { address } = useAccount()
+  const setupDesignSaleMutation = api.collections.setupDesignSale.useMutation()
 
   // const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   const file = event.target.files?.[0]
@@ -66,23 +70,11 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
     setProperties(updated)
   }
 
-  const handleMint = async () => {
-    setIsUploading(true)
-    setUploadProgress(0)
 
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval)
-          setIsUploading(false)
-          return 100
-        }
-        return prev + 10
-      })
-    }, 200)
+  const durationToMilliseconds = (duration: Duration) => {
+    const totalMinutes = duration.days * 24 * 60 + duration.hours * 60 + duration.minutes
+    return totalMinutes * 60 * 1000
   }
-
 
   const handleDesignTokenize = async () => {
     if (!walletProvider) {
@@ -101,22 +93,14 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
 
     try {
       setIsUploading(true)
-      const ethersProvider = new BrowserProvider(walletProvider)
-      const signer = await ethersProvider.getSigner()
-      const userAddress = signer.address
-      const cw721Contract = Cw721Contract__factory.connect(nftCollection[selectedDesing].contract_address, signer)
-
-      // Check if the user is the authorized minter
-      const minterResponse = await cw721Contract.minter()
-      console.log(minterResponse.minter, "Minter Address")
-      const minterAddress = minterResponse.minter as `0x${string}`
-
-      // Proceed with minting
-      const tx = await cw721Contract.mint(userAddress, nftCollection[selectedDesing].id)
-      console.log("Transaction sent:", tx)
-
-      // Wait for transaction confirmation
-      await tx.wait()
+      const result = await setupDesignSaleMutation.mutateAsync({
+        token_id: currentDesign.id.toString(),
+        contract_address: currentDesign.contract_address,
+        buyDuration: durationToMilliseconds(sharesBuyDuration).toString(),
+        auctionDuration: durationToMilliseconds(auctionDuration).toString(),
+        gapDuration: durationToMilliseconds(betweenDuration).toString(),
+      })
+      console.log("Minting successful:", result.transactionHash)
 
       toast.success("NFT minted successfully!", {
         style: {
@@ -128,7 +112,6 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
         },
         position: "top-right",
       })
-      console.log("Minting successful:", tx.hash)
     } catch (error: any) {
       console.error("Error in handleDesignTokenize", error)
 

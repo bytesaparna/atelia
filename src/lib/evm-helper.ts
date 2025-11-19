@@ -18,7 +18,7 @@ export const RPC_PROVIDER = createPublicClient({
 })
 
 export const getWalletSigner = async () => {
-    const privateKey = process.env.WALLET_PRIVATE_KEY
+    const privateKey = process.env.OWNER_PRIVATE_KEY
     if (!privateKey) {
         throw new Error("Wallet Private Key is not set")
     }

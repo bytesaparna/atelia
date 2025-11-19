@@ -147,6 +147,25 @@ export declare namespace IKernelContract {
     key: string,
     value: string
   ] & { key: string; value: string };
+
+  export type BatchExecuteAdoParamsStruct = { amp_msg: AmpMsgLib.AmpMsgStruct };
+
+  export type BatchExecuteAdoParamsStructOutput = [
+    amp_msg: AmpMsgLib.AmpMsgStructOutput
+  ] & { amp_msg: AmpMsgLib.AmpMsgStructOutput };
+
+  export type BatchInstantiateAdoParamsStruct = {
+    params: IKernelContract.InstantiateAdoParamStruct;
+    instantiate_msg: BytesLike;
+  };
+
+  export type BatchInstantiateAdoParamsStructOutput = [
+    params: IKernelContract.InstantiateAdoParamStructOutput,
+    instantiate_msg: string
+  ] & {
+    params: IKernelContract.InstantiateAdoParamStructOutput;
+    instantiate_msg: string;
+  };
 }
 
 export interface KernelContractInterface extends Interface {
@@ -179,7 +198,12 @@ export interface KernelContractInterface extends Interface {
   ): FunctionFragment;
 
   getEvent(
-    nameOrSignatureOrTopic: "AdoDefaultInitialized" | "Initialized" | "Upgraded"
+    nameOrSignatureOrTopic:
+      | "AdoDefaultInitialized"
+      | "BatchExecuteAdo"
+      | "BatchInstantiateAdo"
+      | "Initialized"
+      | "Upgraded"
   ): EventFragment;
 
   encodeFunctionData(
@@ -359,6 +383,44 @@ export namespace AdoDefaultInitializedEvent {
     adoType: string;
     version: string;
     adoOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace BatchExecuteAdoEvent {
+  export type InputTuple = [
+    sender: AddressLike,
+    params: IKernelContract.BatchExecuteAdoParamsStruct
+  ];
+  export type OutputTuple = [
+    sender: string,
+    params: IKernelContract.BatchExecuteAdoParamsStructOutput
+  ];
+  export interface OutputObject {
+    sender: string;
+    params: IKernelContract.BatchExecuteAdoParamsStructOutput;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace BatchInstantiateAdoEvent {
+  export type InputTuple = [
+    sender: AddressLike,
+    params: IKernelContract.BatchInstantiateAdoParamsStruct
+  ];
+  export type OutputTuple = [
+    sender: string,
+    params: IKernelContract.BatchInstantiateAdoParamsStructOutput
+  ];
+  export interface OutputObject {
+    sender: string;
+    params: IKernelContract.BatchInstantiateAdoParamsStructOutput;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -732,6 +794,20 @@ export interface KernelContract extends BaseContract {
     AdoDefaultInitializedEvent.OutputObject
   >;
   getEvent(
+    key: "BatchExecuteAdo"
+  ): TypedContractEvent<
+    BatchExecuteAdoEvent.InputTuple,
+    BatchExecuteAdoEvent.OutputTuple,
+    BatchExecuteAdoEvent.OutputObject
+  >;
+  getEvent(
+    key: "BatchInstantiateAdo"
+  ): TypedContractEvent<
+    BatchInstantiateAdoEvent.InputTuple,
+    BatchInstantiateAdoEvent.OutputTuple,
+    BatchInstantiateAdoEvent.OutputObject
+  >;
+  getEvent(
     key: "Initialized"
   ): TypedContractEvent<
     InitializedEvent.InputTuple,
@@ -756,6 +832,28 @@ export interface KernelContract extends BaseContract {
       AdoDefaultInitializedEvent.InputTuple,
       AdoDefaultInitializedEvent.OutputTuple,
       AdoDefaultInitializedEvent.OutputObject
+    >;
+
+    "BatchExecuteAdo(address,tuple)": TypedContractEvent<
+      BatchExecuteAdoEvent.InputTuple,
+      BatchExecuteAdoEvent.OutputTuple,
+      BatchExecuteAdoEvent.OutputObject
+    >;
+    BatchExecuteAdo: TypedContractEvent<
+      BatchExecuteAdoEvent.InputTuple,
+      BatchExecuteAdoEvent.OutputTuple,
+      BatchExecuteAdoEvent.OutputObject
+    >;
+
+    "BatchInstantiateAdo(address,tuple)": TypedContractEvent<
+      BatchInstantiateAdoEvent.InputTuple,
+      BatchInstantiateAdoEvent.OutputTuple,
+      BatchInstantiateAdoEvent.OutputObject
+    >;
+    BatchInstantiateAdo: TypedContractEvent<
+      BatchInstantiateAdoEvent.InputTuple,
+      BatchInstantiateAdoEvent.OutputTuple,
+      BatchInstantiateAdoEvent.OutputObject
     >;
 
     "Initialized(uint64)": TypedContractEvent<
