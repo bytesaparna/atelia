@@ -10,6 +10,10 @@ import type { IAppContract } from "@/src/contract-types/AppContract";
 
 import { APP_CONFIG } from "@/src/config/app-config";
 import { Abi } from "viem";
+import { SplitterContractStorage } from "@/src/contract-types/SplitterContract";
+import type { RecipientLib } from "@/src/contract-types/SplitterContract";
+import { IExchangeContract } from "@/src/contract-types/ExchangeContract";
+import { AssetLib, ScheduleLib } from "@/src/contract-types/ExchangeContract";
 
 
 export const collectionsRouter = createTRPCRouter({
@@ -96,33 +100,8 @@ export const collectionsRouter = createTRPCRouter({
             const BUY_EXCHANGE_RATE_BPS = BigInt("50000000"); // 1 ETH = 5000 ATELIA
             const REDEEM_EXCHANGE_RATE_BPS = BigInt("10000") / BigInt("5000"); // 1 ATELIA = 1/5000 ETH
             const MIN_BID = (SHARES_SUPPLY * REDEEM_EXCHANGE_RATE_BPS) / BigInt("10000");
+            const native = "stt";
 
-
-            // const splitterConfig: SplitterContractStorage.SplitterConfigStruct[] = [
-            //     {
-            //         recipient: { recipient: input.owner, message: "0x" },
-            //         split_bps: 1000,
-            //     },
-            //     {
-            //         recipient: { recipient: input.owner, message: "0x" },
-            //         split_bps: 9000,
-            //     },
-            // ];
-
-            // const splitterMessage = splitterInterface.encodeFunctionData("send_native", [splitterConfig]);
-
-            // const buyExchangeComponent: IAppContract.AppComponentParamStruct = {
-            //     name: `buy-shares-${input.token_id}`,
-            //     ado_type: "exchange@0.1.0",
-            //     instantiate_msg: exchangeInterface.encodeFunctionData("initialize", [{
-            //         owner: input.owner,
-            //         from_asset: { native: "stt", smart: "" },
-            //         to_asset: { native: "", smart: APP_CONFIG.shares_address(Number(input.token_id)) },
-            //         recipient: { recipient: APP_CONFIG.splitter_address(), message: splitterMessage },
-            //         exchange_rate_bps: BUY_EXCHANGE_RATE_BPS,
-            //         schedule: buySchedule,
-            //     }]),
-            // };
 
             // const redeemExchangeComponent: IAppContract.AppComponentParamStruct = {
             //     name: `redeem-shares-${input.token_id}`,
@@ -200,7 +179,7 @@ export const collectionsRouter = createTRPCRouter({
             const mintTokenMessage: IKernelContract.BatchExecuteAdoParamsStruct = {
                 amp_msg: {
                     recipient: APP_CONFIG.token_address(),
-                    message: cw721Interface.encodeFunctionData("mint_with_uri", [owner, "102", `https://atelia.vercel.app/tokens/design-${input.token_id}.json`]),
+                    message: cw721Interface.encodeFunctionData("mint_with_uri", [owner, "104", `https://atelia.vercel.app/tokens/design-${input.token_id}.json`]),
                     funds: BigInt(0),
                     config: { exit_at_error: true },
                 } as AmpMsgLib.AmpMsgStruct
@@ -212,13 +191,10 @@ export const collectionsRouter = createTRPCRouter({
             }
             console.dir(batchExecuteAdoParamsStruct, { depth: null });
 
-            const encodedMintMessage: IKernelContract.BatchMessageStruct =
-            {
+            const encodedMintMessage: IKernelContract.BatchMessageStruct = {
                 message_type: BATCH_MESSAGE_TYPE.EXECUTE_ADO,
                 data: abiCoder.encode([batchExecuteAdoParamsStruct], [mintTokenMessage])
             }
-
-
 
             const createAddAppComponentExecuteMessage = (name: string, adoType: string, instantiate_msg: BytesLike): IKernelContract.BatchMessageStruct => {
                 const addAppComponentMessage: IAppContract.AppComponentParamStruct = {
@@ -285,10 +261,62 @@ export const collectionsRouter = createTRPCRouter({
             }
 
 
+            // STEP3 - SETUP BUY Exchange 
+            const setUpBuyExchange = (tokenId: string, buyDuration: string): IKernelContract.BatchMessageStruct => {
+                const config: SplitterContractStorage.SplitterConfigStruct[] = [
+                    {
+                        recipient: {
+                            recipient: owner,
+                            message: "0x"
+                        } as RecipientLib.RecipientStruct,
+                        split_bps: 1000,
+                    },
+                    {
+                        recipient: {
+                            recipient: owner,
+                            message: "0x"
+                        } as RecipientLib.RecipientStruct,
+                        split_bps: 9000,
+                    }
+                ]
+                const encodedSplitterMessage = splitterInterface.encodeFunctionData("send_native", [config]);
+                const exchangeContractMessage: IExchangeContract.ExchangeContractInitParamsStruct = {
+                    owner: owner,
+                    from_asset: { native: native, smart: "" } as AssetLib.AssetStruct,
+                    to_asset: {
+                        native: "",
+                        smart: APP_CONFIG.shares_address(Number(tokenId))
+                    } as AssetLib.AssetStruct,
+                    recipient: {
+                        recipient: APP_CONFIG.splitter_address(),
+                        message: encodedSplitterMessage
+                    } as RecipientLib.RecipientStruct,
+                    exchange_rate_bps: BUY_EXCHANGE_RATE_BPS,
+                    schedule: {
+                        start: {
+                            from_now: 0,
+                            at_time: 0,
+                            infinite: false
+                        } as ScheduleLib.ExpiryStruct,
+                        end: {
+                            from_now: buyDuration,
+                            at_time: 0,
+                            infinite: false
+                        } as ScheduleLib.ExpiryStruct,
+                    } as ScheduleLib.ScheduleStruct,
+                }
+
+                const encodedExchangeContractMessage = exchangeInterface.encodeFunctionData("initialize", [exchangeContractMessage])
+
+                const message = createAddAppComponentExecuteMessage(`buy-shares-${tokenId}`, "exchange@0.1.0", encodedExchangeContractMessage)
+                return message;
+            }
+
 
             const messages: IKernelContract.BatchMessageStruct[] = [
                 encodedMintMessage,
-                setupShares("102")
+                setupShares("104"),
+                setUpBuyExchange("104", buyDuration.toString()),
                 // addComponentMessage(buyExchangeComponent),
                 // addComponentMessage(redeemExchangeComponent),
                 // approveSharesMessage,
@@ -306,6 +334,7 @@ export const collectionsRouter = createTRPCRouter({
                 transactionHash: tx.hash,
             };
         }),
+
 
 });
 
