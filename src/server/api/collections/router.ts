@@ -1,8 +1,8 @@
-import { AppContract__factory, AuctionContract__factory, Cw20Contract__factory, Cw721Contract__factory, ExchangeContract__factory, KernelContract__factory, SplitterContract__factory } from "@/src/contract-types";
+import { AppContract__factory, KernelContract__factory } from "@/src/contract-types";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { fechTokenUri, queryAllTokens, queryNftCollection, queryNftCollections, queryTokenState, queryUserShareBalanceOfAllNfts } from "./queries";
 import { z } from "zod";
-import { getSharesContract, getWalletSigner } from "@/src/lib/evm-helper";
+import { getWalletSigner } from "@/src/lib/evm-helper";
 import { AbiCoder, BytesLike, Fragment, FunctionFragment, ParamType } from "ethers";
 import type { IKernelContract, AmpMsgLib } from "@/src/contract-types/KernelContract";
 import type { ICw20Contract } from "@/src/contract-types/Cw20Contract";
@@ -14,6 +14,9 @@ import { SplitterContractStorage } from "@/src/contract-types/SplitterContract";
 import type { RecipientLib } from "@/src/contract-types/SplitterContract";
 import { IExchangeContract } from "@/src/contract-types/ExchangeContract";
 import { AssetLib, ScheduleLib } from "@/src/contract-types/ExchangeContract";
+import { appInterface, auctionInterface, BATCH_MESSAGE_TYPE, BUY_EXCHANGE_RATE_BPS, BUY_NOW_PRICE, cw20Interface, cw721Interface, exchangeInterface, MIN_BID, MIN_RAISE, NATIVE, REDEEM_EXCHANGE_RATE_BPS, SHARES_SUPPLY, splitterInterface } from "./types";
+import { getStructAbi } from "./fuctions";
+import { IAuctionContract } from "@/src/contract-types/AuctionContract";
 
 
 export const collectionsRouter = createTRPCRouter({
@@ -60,8 +63,6 @@ export const collectionsRouter = createTRPCRouter({
         .input(
             z.object({
                 token_id: z.string(),
-                // owner: z.string(),
-                contract_address: z.string(),
                 buyDuration: z.string(),
                 auctionDuration: z.string(),
                 gapDuration: z.string(),
@@ -77,125 +78,19 @@ export const collectionsRouter = createTRPCRouter({
             const signer = await getWalletSigner();
             const owner = await signer.getAddress();
             const kernelAddress = process.env.NEXT_PUBLIC_KERNEL_ADDRESS;
-
-            const BATCH_MESSAGE_TYPE = {
-                EXECUTE_ADO: 0,
-                INSTANTIATE_ADO: 1,
-            } as const;
-
-
+            const appOwner = process.env.NEXT_PUBLIC_OWNER_ADDRESS;
+            if (!appOwner) {
+                throw new Error("NEXT_PUBLIC_OWNER_ADDRESS is not configured.");
+            }
             const abiCoder = AbiCoder.defaultAbiCoder();
 
-
-            const cw721Interface = Cw721Contract__factory.createInterface();
-            const cw20Interface = Cw20Contract__factory.createInterface();
-            const kernelInterface = KernelContract__factory.createInterface();
-            const exchangeInterface = ExchangeContract__factory.createInterface();
-            const auctionInterface = AuctionContract__factory.createInterface();
-            const appInterface = AppContract__factory.createInterface();
-            const splitterInterface = SplitterContract__factory.createInterface();
-
-
-            const SHARES_SUPPLY = BigInt("5000000000000000000000");
-            const BUY_EXCHANGE_RATE_BPS = BigInt("50000000"); // 1 ETH = 5000 ATELIA
-            const REDEEM_EXCHANGE_RATE_BPS = BigInt("10000") / BigInt("5000"); // 1 ATELIA = 1/5000 ETH
-            const MIN_BID = (SHARES_SUPPLY * REDEEM_EXCHANGE_RATE_BPS) / BigInt("10000");
-            const native = "stt";
-
-
-            // const redeemExchangeComponent: IAppContract.AppComponentParamStruct = {
-            //     name: `redeem-shares-${input.token_id}`,
-            //     ado_type: "exchange@0.1.0",
-            //     instantiate_msg: exchangeInterface.encodeFunctionData("initialize", [{
-            //         owner: input.owner,
-            //         from_asset: { native: "", smart: APP_CONFIG.shares_address(Number(input.token_id)) },
-            //         to_asset: { native: "stt", smart: "" },
-            //         recipient: { recipient: input.owner, message: "0x" },
-            //         exchange_rate_bps: REDEEM_EXCHANGE_RATE_BPS,
-            //         schedule: redeemSchedule,
-            //     }]),
-            // };
-
-
-
-            // const approveSharesMessage: IKernelContract.BatchMessageStruct = {
-            //     message_type: BATCH_MESSAGE_TYPE.EXECUTE_ADO,
-            //     data: encodeBatchExecute(
-            //         APP_CONFIG.buy_exchange_address(Number(input.token_id)),
-            //         cw20Interface.encodeFunctionData("approve(string,uint256)", [APP_CONFIG.buy_exchange_address(Number(input.token_id)), SHARES_SUPPLY])
-            //     ),
-            // };
-
-            // const startExchangeMessage: IKernelContract.BatchMessageStruct = {
-            //     message_type: BATCH_MESSAGE_TYPE.EXECUTE_ADO,
-            //     data: encodeBatchExecute(
-            //         APP_CONFIG.buy_exchange_address(Number(input.token_id)),
-            //         exchangeInterface.encodeFunctionData("add_funds_erc20", [SHARES_SUPPLY])
-            //     ),
-            // };
-
-            // const approveNftMessage: IKernelContract.BatchMessageStruct = {
-            //     message_type: BATCH_MESSAGE_TYPE.EXECUTE_ADO,
-            //     data: encodeBatchExecute(
-            //         APP_CONFIG.token_address(),
-            //         cw721Interface.encodeFunctionData("approve(string,uint256)", [APP_CONFIG.auction_address(), input.token_id])
-            //     ),
-            // };
-
-            // const auctionSplitterConfig: SplitterContractStorage.SplitterConfigStruct[] = [
-            //     {
-            //         recipient: { recipient: input.owner, message: "0x" },
-            //         split_bps: 500,
-            //     },
-            //     {
-            //         recipient: {
-            //             recipient: APP_CONFIG.redeem_exchange_address(Number(input.token_id)),
-            //             message: exchangeInterface.encodeFunctionData("add_funds_native_dynamic", [{ max_inflow_amount: SHARES_SUPPLY }]),
-            //         },
-            //         split_bps: 9500,
-            //     },
-            // ];
-
-            // const auctionSplitterMessage = splitterInterface.encodeFunctionData("send_native", [auctionSplitterConfig]);
-
-            // const startAuctionMessage: IKernelContract.BatchMessageStruct = {
-            //     message_type: BATCH_MESSAGE_TYPE.EXECUTE_ADO,
-            //     data: encodeBatchExecute(
-            //         APP_CONFIG.auction_address(),
-            //         auctionInterface.encodeFunctionData("start_auction", [{
-            //             token_id: Number(input.token_id),
-            //             min_bid: MIN_BID,
-            //             min_raise: parseUnits("0.05", 18),
-            //             schedule: auctionSchedule,
-            //             recipient: { recipient: APP_CONFIG.splitter_address(), message: auctionSplitterMessage } as AuctionRecipientLib.RecipientStruct,
-            //             bid_asset: { native: "stt", smart: "" } as AuctionAssetLib.AssetStruct,
-            //             buy_now_price: MIN_BID * 10,
-            //         } satisfies IAuctionContract.StartAuctionParamsStruct])
-            //     ),
-            // };
-
-
-            // STEP1 - MINTING THE TOKEN USING ERC721
-            const mintTokenMessage: IKernelContract.BatchExecuteAdoParamsStruct = {
-                amp_msg: {
-                    recipient: APP_CONFIG.token_address(),
-                    message: cw721Interface.encodeFunctionData("mint_with_uri", [owner, "104", `https://atelia.vercel.app/tokens/design-${input.token_id}.json`]),
-                    funds: BigInt(0),
-                    config: { exit_at_error: true },
-                } as AmpMsgLib.AmpMsgStruct
-            }
-
+            // Batch Execute ADO Params Struct needed for the batch execute message
             const batchExecuteAdoParamsStruct = getStructAbi(KernelContract__factory.abi, "struct IKernelContract.BatchExecuteAdoParams");
             if (!batchExecuteAdoParamsStruct) {
                 throw new Error("BatchExecuteAdoParams struct not found");
             }
-            console.dir(batchExecuteAdoParamsStruct, { depth: null });
 
-            const encodedMintMessage: IKernelContract.BatchMessageStruct = {
-                message_type: BATCH_MESSAGE_TYPE.EXECUTE_ADO,
-                data: abiCoder.encode([batchExecuteAdoParamsStruct], [mintTokenMessage])
-            }
-
+            // Function to create add app component execute message
             const createAddAppComponentExecuteMessage = (name: string, adoType: string, instantiate_msg: BytesLike): IKernelContract.BatchMessageStruct => {
                 const addAppComponentMessage: IAppContract.AppComponentParamStruct = {
                     name: name,
@@ -221,6 +116,7 @@ export const collectionsRouter = createTRPCRouter({
                         config: { exit_at_error: true },
                     } as AmpMsgLib.AmpMsgStruct
                 }
+
                 const encodeBatchExecute = abiCoder.encode([batchExecuteAdoParamsStruct], [batchExecuteMessage])
 
                 const message: IKernelContract.BatchMessageStruct = {
@@ -230,6 +126,23 @@ export const collectionsRouter = createTRPCRouter({
 
                 return message;
             }
+
+
+            // STEP1 - MINTING THE TOKEN USING ERC721
+            const mintTokenMessage: IKernelContract.BatchExecuteAdoParamsStruct = {
+                amp_msg: {
+                    recipient: APP_CONFIG.token_address(),
+                    message: cw721Interface.encodeFunctionData("mint_with_uri", [owner, "106", `https://atelia.vercel.app/tokens/design-${input.token_id}.json`]),
+                    funds: BigInt(0),
+                    config: { exit_at_error: true },
+                } as AmpMsgLib.AmpMsgStruct
+            }
+
+            const encodedMintMessage: IKernelContract.BatchMessageStruct = {
+                message_type: BATCH_MESSAGE_TYPE.EXECUTE_ADO,
+                data: abiCoder.encode([batchExecuteAdoParamsStruct], [mintTokenMessage])
+            }
+
 
             // STEP2 - MINTING SHARES USING ERC20
             const setupShares = (tokenId: string): IKernelContract.BatchMessageStruct => {
@@ -255,11 +168,8 @@ export const collectionsRouter = createTRPCRouter({
                 const encodeCw20ContractMessage = cw20Interface.encodeFunctionData("initialize", [cw20ContractMessage])
 
                 const sharesMessage = createAddAppComponentExecuteMessage(`shares-${tokenId}`, "cw20@0.1.0", encodeCw20ContractMessage)
-                console.log("sharesMessage");
-                console.dir(sharesMessage, { depth: null });
                 return sharesMessage;
             }
-
 
             // STEP3 - SETUP BUY Exchange 
             const setUpBuyExchange = (tokenId: string, buyDuration: string): IKernelContract.BatchMessageStruct => {
@@ -282,7 +192,7 @@ export const collectionsRouter = createTRPCRouter({
                 const encodedSplitterMessage = splitterInterface.encodeFunctionData("send_native", [config]);
                 const exchangeContractMessage: IExchangeContract.ExchangeContractInitParamsStruct = {
                     owner: owner,
-                    from_asset: { native: native, smart: "" } as AssetLib.AssetStruct,
+                    from_asset: { native: NATIVE, smart: "" } as AssetLib.AssetStruct,
                     to_asset: {
                         native: "",
                         smart: APP_CONFIG.shares_address(Number(tokenId))
@@ -312,17 +222,176 @@ export const collectionsRouter = createTRPCRouter({
                 return message;
             }
 
+            // STEP4- Setup REDEEM exchange
+            const setUpRedeemExchange = (tokenId: string, redeemStartTime: string): IKernelContract.BatchMessageStruct => {
+                const redeemContractMessage: IExchangeContract.ExchangeContractInitParamsStruct = {
+                    owner: owner,
+                    from_asset: {
+                        native: "",
+                        smart: APP_CONFIG.shares_address(Number(tokenId))
+                    } as AssetLib.AssetStruct,
+                    to_asset: { native: NATIVE, smart: "" } as AssetLib.AssetStruct,
+                    recipient: {
+                        recipient: owner,
+                        message: "0x"
+                    } as RecipientLib.RecipientStruct,
+                    exchange_rate_bps: REDEEM_EXCHANGE_RATE_BPS,
+                    schedule: {
+                        start: {
+                            from_now: redeemStartTime,
+                            at_time: 0,
+                            infinite: false
+                        } as ScheduleLib.ExpiryStruct,
+                        end: {
+                            from_now: 0,
+                            at_time: 0,
+                            infinite: true
+                        } as ScheduleLib.ExpiryStruct,
+                    } as ScheduleLib.ScheduleStruct
+                }
+
+                const encodedRedeemContractMessage = exchangeInterface.encodeFunctionData("initialize", [redeemContractMessage])
+
+                const message = createAddAppComponentExecuteMessage(`redeem-shares-${tokenId}`, "exchange@0.1.0", encodedRedeemContractMessage)
+                return message
+            }
+
+            // STEP5- SEND/APPROVE Shares to BuyExchange
+            const approveSharesToExchange = (tokenId: string): IKernelContract.BatchMessageStruct => {
+                const kernelContractBatchMessage: IKernelContract.BatchExecuteAdoParamsStruct = {
+                    amp_msg: {
+                        recipient: (APP_CONFIG.shares_address(Number(tokenId))),
+                        message: cw20Interface.encodeFunctionData("approve(string,uint256)", [APP_CONFIG.buy_exchange_address(Number(tokenId)), SHARES_SUPPLY]),
+                        funds: 0,
+                        config: {
+                            exit_at_error: true
+                        }
+                    } as AmpMsgLib.AmpMsgStruct,
+                }
+
+                const encodedBatchExecuteMessage = abiCoder.encode([batchExecuteAdoParamsStruct], [kernelContractBatchMessage])
+                const message: IKernelContract.BatchMessageStruct = {
+                    message_type: BATCH_MESSAGE_TYPE.EXECUTE_ADO,
+                    data: encodedBatchExecuteMessage
+                }
+
+                return message
+            }
+
+            // STEP6- START exchange
+            const startExchange = (tokenId: string): IKernelContract.BatchMessageStruct => {
+                const kernelContractBatchMessage: IKernelContract.BatchExecuteAdoParamsStruct = {
+                    amp_msg: {
+                        recipient: APP_CONFIG.buy_exchange_address(Number(tokenId)),
+                        message: exchangeInterface.encodeFunctionData("add_funds_erc20", [SHARES_SUPPLY]),
+                        funds: 0,
+                        config: { exit_at_error: true },
+                    } as AmpMsgLib.AmpMsgStruct
+                }
+                const encodedBatchExecuteMessage = abiCoder.encode([batchExecuteAdoParamsStruct], [kernelContractBatchMessage])
+                const message: IKernelContract.BatchMessageStruct = {
+                    message_type: BATCH_MESSAGE_TYPE.EXECUTE_ADO,
+                    data: encodedBatchExecuteMessage
+                }
+
+                return message
+            }
+
+            // STEP7- SEND/Approve NFT to Auction
+            const approveNftToAuction = (tokenId: string): IKernelContract.BatchMessageStruct => {
+                const kernelContractBatchMessage: IKernelContract.BatchExecuteAdoParamsStruct = {
+                    amp_msg: {
+                        recipient: APP_CONFIG.token_address(),
+                        message: cw721Interface.encodeFunctionData("approve(string,uint256)", [APP_CONFIG.auction_address(), tokenId]),
+                        funds: 0,
+                        config: {
+                            exit_at_error: true
+                        }
+                    } as AmpMsgLib.AmpMsgStruct
+                }
+                const encodedBatchExecuteMessage = abiCoder.encode([batchExecuteAdoParamsStruct], [kernelContractBatchMessage])
+                const message: IKernelContract.BatchMessageStruct = {
+                    message_type: BATCH_MESSAGE_TYPE.EXECUTE_ADO,
+                    data: encodedBatchExecuteMessage
+                }
+
+                return message
+            }
+
+            // STEP8- START AUCTION
+            const startAuction = (tokenId: string, auctionStartTime: string, auctionDuration: string): IKernelContract.BatchMessageStruct => {
+                const rate: IExchangeContract.DynamicExchangeRateStruct = {
+                    max_inflow_amount: SHARES_SUPPLY,
+                }
+                const config: SplitterContractStorage.SplitterConfigStruct[] = [
+                    {
+                        recipient: {
+                            recipient: owner,
+                            message: "0x"
+                        } as RecipientLib.RecipientStruct,
+                        split_bps: 500
+                    },
+                    {
+                        recipient: {
+                            recipient: APP_CONFIG.redeem_exchange_address(Number(tokenId)),
+                            message: exchangeInterface.encodeFunctionData("add_funds_native_dynamic", [rate]),
+                        } as RecipientLib.RecipientStruct,
+                        split_bps: 9500
+                    }
+                ]
+                const encodedSplitterMessage = splitterInterface.encodeFunctionData("send_native", [config])
+                const auctionContractMessage: IAuctionContract.StartAuctionParamsStruct = {
+                    token_id: Number(tokenId),
+                    min_bid: MIN_BID,
+                    min_raise: MIN_RAISE,
+                    schedule: {
+                        start: {
+                            from_now: auctionStartTime,
+                            at_time: 0,
+                            infinite: false
+                        } as ScheduleLib.ExpiryStruct,
+                        end: {
+                            from_now: auctionDuration,
+                            at_time: 0,
+                            infinite: false
+                        } as ScheduleLib.ExpiryStruct,
+                    } as ScheduleLib.ScheduleStruct,
+                    recipient: {
+                        recipient: APP_CONFIG.splitter_address(),
+                        message: encodedSplitterMessage
+                    } as RecipientLib.RecipientStruct,
+                    bid_asset: {
+                        native: NATIVE,
+                        smart: ""
+                    } as AssetLib.AssetStruct,
+                    buy_now_price: BUY_NOW_PRICE,
+                }
+                const kernelContractBatchMessage: IKernelContract.BatchExecuteAdoParamsStruct = {
+                    amp_msg: {
+                        recipient: APP_CONFIG.auction_address(),
+                        message: auctionInterface.encodeFunctionData("start_auction", [auctionContractMessage]),
+                        funds: 0,
+                        config: { exit_at_error: true },
+                    } as AmpMsgLib.AmpMsgStruct
+                }
+                const encodedAddAppComponentMessage = abiCoder.encode([batchExecuteAdoParamsStruct], [kernelContractBatchMessage])
+                const message: IKernelContract.BatchMessageStruct = {
+                    message_type: BATCH_MESSAGE_TYPE.EXECUTE_ADO,
+                    data: encodedAddAppComponentMessage
+                }
+
+                return message;
+            }
 
             const messages: IKernelContract.BatchMessageStruct[] = [
                 encodedMintMessage,
-                setupShares("104"),
-                setUpBuyExchange("104", buyDuration.toString()),
-                // addComponentMessage(buyExchangeComponent),
-                // addComponentMessage(redeemExchangeComponent),
-                // approveSharesMessage,
-                // startExchangeMessage,
-                // approveNftMessage,
-                // startAuctionMessage,
+                setupShares("106"),
+                setUpBuyExchange("106", buyDuration.toString()),
+                setUpRedeemExchange("106", redeemStartTime.toString()),
+                approveSharesToExchange("106"),
+                startExchange("106"),
+                approveNftToAuction("106"),
+                startAuction("106", auctionStartTime.toString(), auctionDuration.toString()),
             ];
 
             const kernel = KernelContract__factory.connect(kernelAddress, signer);
@@ -339,29 +408,3 @@ export const collectionsRouter = createTRPCRouter({
 });
 
 
-
-function getStructAbi(abi: any, internalType: string): ParamType | null {
-    for (const f of abi) {
-        const inputs = f.inputs || [];
-        for (const inp of inputs) {
-            if (inp.internalType === internalType) return cleanParamType(inp);
-            // also search recursively
-            if (inp.components) {
-                const found = getStructAbi(inp.components, internalType);
-                if (found) return cleanParamType(found);
-            }
-        }
-    }
-    return null;
-}
-
-function cleanParamType(obj: any): ParamType {
-    const clone = { ...obj };
-    delete clone.indexed;    // ← remove the root indexed
-
-    if (clone.components) {
-        clone.components = clone.components.map(cleanParamType); // ← remove nested indexed
-    }
-
-    return clone;
-}

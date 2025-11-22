@@ -95,7 +95,6 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
       setIsUploading(true)
       const result = await setupDesignSaleMutation.mutateAsync({
         token_id: currentDesign.id.toString(),
-        contract_address: currentDesign.contract_address,
         buyDuration: durationToMilliseconds(sharesBuyDuration).toString(),
         auctionDuration: durationToMilliseconds(auctionDuration).toString(),
         gapDuration: durationToMilliseconds(betweenDuration).toString(),
