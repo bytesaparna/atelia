@@ -138,11 +138,11 @@ const ExploreNFTs: FC<ExploreNFTsProps> = ({ nftCollections, isRedeem }) => {
                       className="w-full h-88 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute top-2 right-2">
-                      <Link href={`https://shannon-explorer.somnia.network/token/${nft.contract_address}/instance/${nft.id}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                      <a href={`https://shannon-explorer.somnia.network/token/${nft.contract_address}/instance/${nft.id}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
                         <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 text-white">
                           <ExternalLink className="h-4 w-4" />
                         </Button>
-                      </Link>
+                      </a>
                     </div>
                     {nft.verified && (
                       <Badge className="absolute top-2 left-2 bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
