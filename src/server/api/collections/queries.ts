@@ -56,17 +56,19 @@ export const queryNftCollections = unstable_cache(async (provider = RPC_PROVIDER
     const tokens = await queryAllTokens(provider);
     const collections = await Promise.all(tokens.map(async (token_id) => {
         const nftCollection = await queryNftCollection(token_id, provider)();
-        return nftCollection satisfies NftCollection;
+        return nftCollection;
     }));
-    return collections
+    return collections.filter((collection): collection is NonNullable<typeof collection> => collection !== null) as NftCollection[];
 }, ["collections"], {
     revalidate: 60 * 5, // 5 minutes
 })
 
 export const queryNftCollection = (token_id: number, provider = RPC_PROVIDER) => unstable_cache(async () => {
     const tokens_address = await queryResolvePath(APP_CONFIG.token_address())();
-    const tokenUri = await queryTokenUri(token_id)(provider);
+    const tokenUri = await queryTokenUri(token_id)(provider).catch(() => null);
+    if (!tokenUri) return null;
     const tokenUriData = await fechTokenUri(tokenUri);
+    if (!tokenUriData) return null;
     const nftCollection = convertTokenUriToNftCollection(tokenUriData);
     const appStatus = await queryTokenState(token_id, provider)();
     return {
@@ -136,12 +138,21 @@ export const queryTokenState = (token_id: number, provider = RPC_PROVIDER) => un
 
 
 
-export const fechTokenUri = unstable_cache(async (uri: string) => {
-    if (!uri.startsWith('https://')) {
-        uri = `https://atelia.vercel.app/tokens${uri}.json`
+export const fechTokenUri = unstable_cache(async (uri: string): Promise<TokenUri | null> => {
+    try {
+        if (!uri.startsWith('https://')) {
+            uri = `https://atelia.vercel.app/tokens${uri}.json`
+        }
+        console.log(`Fetching token URI: ${uri}`);
+        const tokenUri = await fetch(uri);
+        if (!tokenUri.ok) {
+            console.log(`Failed to fetch token URI: ${uri}, status: ${tokenUri.status}`);
+            return null;
+        }
+        return await tokenUri.json() as TokenUri;
+    } catch (error) {
+        return null;
     }
-    const tokenUri = await fetch(uri);
-    return await tokenUri.json() as TokenUri;
 }, ["uri"], {
     revalidate: 60 * 60 * 24, // 24 hours
 })
