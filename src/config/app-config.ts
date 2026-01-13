@@ -1,5 +1,5 @@
 export const APP_CONFIG = {
-    address: `~${process.env.NEXT_PUBLIC_OWNER_ADDRESS}/somnia-hack-atelia-4`,
+    address: `~${process.env.NEXT_PUBLIC_OWNER_ADDRESS}/somnia-hack-atelia-5`,
     auction_address: () => `${APP_CONFIG.address}/auction`,
     token_address: () => `${APP_CONFIG.address}/tokens`,
     splitter_address: () => `${APP_CONFIG.address}/splitter`,

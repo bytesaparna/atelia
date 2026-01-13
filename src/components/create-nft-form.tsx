@@ -8,13 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/ca
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Textarea } from "@/src/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { Badge } from "@/src/components/ui/badge"
 import { Upload, ImageIcon, Loader2, Plus, X } from "lucide-react"
-import { Progress } from "@/src/components/ui/progress"
 import { NftCollection } from "../types/collections"
 import { motion } from "framer-motion"
 import { Duration, DurationSelector } from "./ui/duration-selector"
+import { useAppKitProvider, Provider } from "@reown/appkit/react"
+import { toast } from "sonner"
+import { api } from "../trpc/clients"
 
 
 interface CreatePageProps {
@@ -28,53 +29,95 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
 
 
   const [isUploading, setIsUploading] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState(0)
-  const [previewImage, setPreviewImage] = useState<string | null>(null)
-  const [properties, setProperties] = useState<Array<{ trait_type: string; value: string }>>([])
+  // const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [sharesBuyDuration, setSharesBuyDuration] = useState<Duration>({ days: 10, hours: 0, minutes: 0 });
   const [auctionDuration, setAuctionDuration] = useState<Duration>({ days: 0, hours: 2, minutes: 30 });
   const [betweenDuration, setBetweenDuration] = useState<Duration>({ days: 1, hours: 0, minutes: 0 });
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setPreviewImage(e.target?.result as string)
-      }
-      reader.readAsDataURL(file)
-    }
+  const { walletProvider } = useAppKitProvider<Provider>("eip155")
+  const setupDesignSaleMutation = api.collections.setupDesignSale.useMutation()
+ const invalidateCollectionsCacheMutation = api.collections.invalidateCollectionsCache.useMutation();
+
+  // const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files?.[0]
+  //   if (file) {
+  //     const reader = new FileReader()
+  //     reader.onload = (e) => {
+  //       setPreviewImage(e.target?.result as string)
+  //     }
+  //     reader.readAsDataURL(file)
+  //   }
+  // }
+
+
+  const durationToMilliseconds = (duration: Duration) => {
+    const totalMinutes = duration.days * 24 * 60 + duration.hours * 60 + duration.minutes
+    return totalMinutes * 60 * 1000
   }
 
-  const addProperty = () => {
-    setProperties([...properties, { trait_type: "", value: "" }])
-  }
-
-  const removeProperty = (index: number) => {
-    setProperties(properties.filter((_, i) => i !== index))
-  }
-
-  const updateProperty = (index: number, field: "trait_type" | "value", value: string) => {
-    const updated = [...properties]
-    updated[index][field] = value
-    setProperties(updated)
-  }
-
-  const handleMint = async () => {
-    setIsUploading(true)
-    setUploadProgress(0)
-
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval)
-          setIsUploading(false)
-          return 100
-        }
-        return prev + 10
+  const handleDesignTokenize = async () => {
+    if (!walletProvider) {
+      toast.error("Please connect your wallet", {
+        style: {
+          background: "rgba(255, 87, 34, 0.8)",
+          color: "white",
+          border: "1px solid rgba(249, 115, 22, 0.3)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)"
+        },
+        position: "top-right",
       })
-    }, 200)
+      return
+    }
+
+    try {
+      setIsUploading(true)
+      const result = await setupDesignSaleMutation.mutateAsync({
+        token_id: currentDesign.id.toString(),
+        buyDuration: durationToMilliseconds(sharesBuyDuration).toString(),
+        auctionDuration: durationToMilliseconds(auctionDuration).toString(),
+        gapDuration: durationToMilliseconds(betweenDuration).toString(),
+      })
+      console.log("Minting successful:", result.transactionHash)
+
+      toast.success("NFT minted successfully!", {
+        style: {
+          background: "linear-gradient(to right, rgba(34, 211, 238, 0.8), rgba(52, 211, 153, 0.8))",
+          color: "white",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+        },
+        position: "top-right",
+      })
+
+      invalidateCollectionsCacheMutation.mutateAsync();
+    } catch (error: any) {
+      console.error("Error in handleDesignTokenize", error)
+
+      // Extract error message
+      let errorMessage = "Failed to mint NFT"
+      if (error?.reason) {
+        errorMessage = error.reason
+      } else if (error?.message) {
+        errorMessage = error.message
+      } else if (typeof error === "string") {
+        errorMessage = error
+      }
+
+      toast.error(errorMessage, {
+        style: {
+          background: "rgba(255, 87, 34, 0.8)",
+          color: "white",
+          border: "1px solid rgba(249, 115, 22, 0.3)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)"
+        },
+        position: "top-right",
+      })
+    } finally {
+      setIsUploading(false)
+    }
   }
 
   return (
@@ -106,7 +149,7 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
                   <div>
                     <p className="text-foreground font-medium">Choose design to upload</p>
                   </div>
-                  <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="file-upload" />
+                  <input type="file" accept="image/*" className="hidden" id="file-upload" />
                 </div>
               )}
             </CardContent>
@@ -163,6 +206,7 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
                 placeholder="Enter NFT name"
                 className="bg-background border-border/50 focus:border-cyan-400"
                 value={currentDesign.title}
+                readOnly
               />
             </div>
 
@@ -175,29 +219,8 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
                 placeholder="Describe your NFT"
                 className="bg-background border-border/50 focus:border-cyan-400 min-h-[100px]"
                 value={currentDesign.description}
+                readOnly
               />
-            </div>
-
-            <div className="space-y-4">
-              {properties.map((property, index) => (
-                <div key={index} className="flex gap-2 items-center">
-                  <Input
-                    placeholder="Trait type"
-                    value={property.trait_type}
-                    onChange={(e) => updateProperty(index, "trait_type", e.target.value)}
-                    className="bg-background border-border/50 focus:border-cyan-400"
-                  />
-                  <Input
-                    placeholder="Value"
-                    value={property.value}
-                    onChange={(e) => updateProperty(index, "value", e.target.value)}
-                    className="bg-background border-border/50 focus:border-cyan-400"
-                  />
-                  <Button variant="ghost" size="icon" onClick={() => removeProperty(index)}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
             </div>
 
             {/* Durations */}
@@ -248,8 +271,8 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
 
             <div className="pt-4 border-t border-border/50">
               <Button
-                onClick={handleMint}
-                disabled={isUploading || !previewImage}
+                onClick={handleDesignTokenize}
+                disabled={isUploading}
                 className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 disabled:opacity-50"
               >
                 {isUploading ? (

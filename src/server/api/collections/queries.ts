@@ -56,17 +56,20 @@ export const queryNftCollections = unstable_cache(async (provider = RPC_PROVIDER
     const tokens = await queryAllTokens(provider);
     const collections = await Promise.all(tokens.map(async (token_id) => {
         const nftCollection = await queryNftCollection(token_id, provider)();
-        return nftCollection satisfies NftCollection;
+        return nftCollection;
     }));
-    return collections
+    return collections.filter((collection): collection is NonNullable<typeof collection> => collection !== null) as NftCollection[];
 }, ["collections"], {
     revalidate: 60 * 5, // 5 minutes
+    tags: ["collections"],
 })
 
 export const queryNftCollection = (token_id: number, provider = RPC_PROVIDER) => unstable_cache(async () => {
     const tokens_address = await queryResolvePath(APP_CONFIG.token_address())();
-    const tokenUri = await queryTokenUri(token_id)(provider);
+    const tokenUri = await queryTokenUri(token_id)(provider).catch(() => null);
+    if (!tokenUri) return null;
     const tokenUriData = await fechTokenUri(tokenUri);
+    if (!tokenUriData) return null;
     const nftCollection = convertTokenUriToNftCollection(tokenUriData);
     const appStatus = await queryTokenState(token_id, provider)();
     return {
@@ -98,36 +101,36 @@ export const convertTokenUriToNftCollection = (tokenUri: TokenUri) => {
 
 
 export const queryTokenState = (token_id: number, provider = RPC_PROVIDER) => unstable_cache(async () => {
-    const exchangeConfig = await queryBuyExchangeConfig(token_id, provider)();
-    const auctionStatus = await queryLatestAuctionState(token_id, provider)();
-    const redeem_address = await queryResolvePath(APP_CONFIG.redeem_exchange_address(token_id))();
+    const exchangeConfig = await queryBuyExchangeConfig(token_id, provider)().catch(() => null);
+    const auctionStatus = await queryLatestAuctionState(token_id, provider)().catch(() => null);
+    const redeem_address = await queryResolvePath(APP_CONFIG.redeem_exchange_address(token_id))().catch(() => null);
 
     const currentTimeInMilliseconds = getCurrentTimeInMilliseconds();
 
-    const min_bid_price = auctionStatus.min_bid;
-    const min_raise_price = auctionStatus.min_raise
-    const share_buy_price = 10000 / exchangeConfig.exchange_rate_bps;
+    const min_bid_price = auctionStatus?.min_bid ?? 0;
+    const min_raise_price = auctionStatus?.min_raise ?? 0;
+    const share_buy_price = exchangeConfig ? 10000 / exchangeConfig.exchange_rate_bps : 0;
 
-    const total_shares = exchangeConfig.amount + exchangeConfig.exchanged_amount;
+    const total_shares = exchangeConfig ? exchangeConfig.amount + exchangeConfig.exchanged_amount : 0;
 
     const price_based_on_buy = share_buy_price * total_shares;
 
-    const token_state: TokenState = Number(exchangeConfig.end_time) > currentTimeInMilliseconds ? TokenState.BUY : Number(auctionStatus.end_time) > currentTimeInMilliseconds ? TokenState.AUCTION : TokenState.REDEEM;
+    const token_state: TokenState = exchangeConfig ? Number(exchangeConfig.end_time) > currentTimeInMilliseconds ? TokenState.BUY : auctionStatus ? Number(auctionStatus.end_time) > currentTimeInMilliseconds ? TokenState.AUCTION : TokenState.REDEEM : TokenState.REDEEM : TokenState.BUY;
 
     const state: ITokenState = {
         state: token_state,
-        auction_address: auctionStatus.auction_address,
-        buy_exchange_address: exchangeConfig.contract_address,
-        redeem_exchange_address: redeem_address,
+        auction_address: auctionStatus?.auction_address ?? "",
+        buy_exchange_address: exchangeConfig?.contract_address ?? "",
+        redeem_exchange_address: redeem_address ?? "",
         share_buy_price: share_buy_price,
         price_based_on_buy: price_based_on_buy,
         min_bid_price: min_bid_price,
         min_raise_price: min_raise_price,
-        buy_end_time: Number(exchangeConfig.end_time),
-        auction_start_time: Number(auctionStatus.start_time),
-        auction_end_time: Number(auctionStatus.end_time),
-        redeem_start_time: Number(exchangeConfig.start_time),
-        latest_auction_id: auctionStatus.latest_auction_id
+        buy_end_time: exchangeConfig ? Number(exchangeConfig.end_time) : 0,
+        auction_start_time: auctionStatus ? Number(auctionStatus.start_time) : 0,
+        auction_end_time: auctionStatus ? Number(auctionStatus.end_time) : 0,
+        redeem_start_time: exchangeConfig ? Number(exchangeConfig.start_time) : 0,
+        latest_auction_id: auctionStatus ? auctionStatus.latest_auction_id : 0,
     }
     return state;
 }, ["token", "state", "token_id", token_id.toString()], {
@@ -136,12 +139,21 @@ export const queryTokenState = (token_id: number, provider = RPC_PROVIDER) => un
 
 
 
-export const fechTokenUri = unstable_cache(async (uri: string) => {
-    if (!uri.startsWith('https://')) {
-        uri = `https://atelia.vercel.app/tokens${uri}.json`
+export const fechTokenUri = unstable_cache(async (uri: string): Promise<TokenUri | null> => {
+    try {
+        if (!uri.startsWith('https://')) {
+            uri = `https://atelia.vercel.app/tokens${uri}.json`
+        }
+        console.log(`Fetching token URI: ${uri}`);
+        const tokenUri = await fetch(uri);
+        if (!tokenUri.ok) {
+            console.log(`Failed to fetch token URI: ${uri}, status: ${tokenUri.status}`);
+            return null;
+        }
+        return await tokenUri.json() as TokenUri;
+    } catch (error) {
+        return null;
     }
-    const tokenUri = await fetch(uri);
-    return await tokenUri.json() as TokenUri;
 }, ["uri"], {
     revalidate: 60 * 60 * 24, // 24 hours
 })
