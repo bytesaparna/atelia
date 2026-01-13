@@ -8,19 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/ca
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Textarea } from "@/src/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { Badge } from "@/src/components/ui/badge"
 import { Upload, ImageIcon, Loader2, Plus, X } from "lucide-react"
-import { Progress } from "@/src/components/ui/progress"
 import { NftCollection } from "../types/collections"
 import { motion } from "framer-motion"
 import { Duration, DurationSelector } from "./ui/duration-selector"
-import { BrowserProvider } from "ethers"
 import { useAppKitProvider, Provider } from "@reown/appkit/react"
-import { Cw721Contract__factory } from "../contract-types"
 import { toast } from "sonner"
 import { api } from "../trpc/clients"
-import { useAccount } from "wagmi"
 
 
 interface CreatePageProps {
@@ -34,16 +29,14 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
 
 
   const [isUploading, setIsUploading] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState(0)
   // const [previewImage, setPreviewImage] = useState<string | null>(null)
-  const [properties, setProperties] = useState<Array<{ trait_type: string; value: string }>>([])
   const [sharesBuyDuration, setSharesBuyDuration] = useState<Duration>({ days: 10, hours: 0, minutes: 0 });
   const [auctionDuration, setAuctionDuration] = useState<Duration>({ days: 0, hours: 2, minutes: 30 });
   const [betweenDuration, setBetweenDuration] = useState<Duration>({ days: 1, hours: 0, minutes: 0 });
 
   const { walletProvider } = useAppKitProvider<Provider>("eip155")
-  const { address } = useAccount()
   const setupDesignSaleMutation = api.collections.setupDesignSale.useMutation()
+ const invalidateCollectionsCacheMutation = api.collections.invalidateCollectionsCache.useMutation();
 
   // const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   const file = event.target.files?.[0]
@@ -55,20 +48,6 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
   //     reader.readAsDataURL(file)
   //   }
   // }
-
-  const addProperty = () => {
-    setProperties([...properties, { trait_type: "", value: "" }])
-  }
-
-  const removeProperty = (index: number) => {
-    setProperties(properties.filter((_, i) => i !== index))
-  }
-
-  const updateProperty = (index: number, field: "trait_type" | "value", value: string) => {
-    const updated = [...properties]
-    updated[index][field] = value
-    setProperties(updated)
-  }
 
 
   const durationToMilliseconds = (duration: Duration) => {
@@ -111,6 +90,8 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
         },
         position: "top-right",
       })
+
+      invalidateCollectionsCacheMutation.mutateAsync();
     } catch (error: any) {
       console.error("Error in handleDesignTokenize", error)
 
@@ -225,6 +206,7 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
                 placeholder="Enter NFT name"
                 className="bg-background border-border/50 focus:border-cyan-400"
                 value={currentDesign.title}
+                readOnly
               />
             </div>
 
@@ -237,29 +219,8 @@ export const CreateNFTForm: FC<CreatePageProps> = ({ nftCollection }) => {
                 placeholder="Describe your NFT"
                 className="bg-background border-border/50 focus:border-cyan-400 min-h-[100px]"
                 value={currentDesign.description}
+                readOnly
               />
-            </div>
-
-            <div className="space-y-4">
-              {properties.map((property, index) => (
-                <div key={index} className="flex gap-2 items-center">
-                  <Input
-                    placeholder="Trait type"
-                    value={property.trait_type}
-                    onChange={(e) => updateProperty(index, "trait_type", e.target.value)}
-                    className="bg-background border-border/50 focus:border-cyan-400"
-                  />
-                  <Input
-                    placeholder="Value"
-                    value={property.value}
-                    onChange={(e) => updateProperty(index, "value", e.target.value)}
-                    className="bg-background border-border/50 focus:border-cyan-400"
-                  />
-                  <Button variant="ghost" size="icon" onClick={() => removeProperty(index)}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
             </div>
 
             {/* Durations */}

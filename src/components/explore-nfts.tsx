@@ -11,6 +11,7 @@ import Link from "next/link"
 import { NftCollection } from "../types/collections"
 import { TOKEN_DENOM } from "../config/app-config"
 import { Countdown } from "./ui/countdown"
+import Image from "next/image"
 
 
 interface ExploreNFTsProps {
@@ -130,27 +131,29 @@ const ExploreNFTs: FC<ExploreNFTsProps> = ({ nftCollections, isRedeem }) => {
               className="group border-border/50 hover:border-cyan-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-400/10 pt-0"
             >
               <CardContent className="p-0">
-                <Link href={`/nft/${nft.id}`}>
-                  <div className="relative overflow-hidden rounded-t-lg cursor-pointer">
-                    <img
+                <div className="relative overflow-hidden rounded-t-lg cursor-pointer">
+                  <Link href={`/nft/${nft.id}`}>
+                    <Image
+                      width={500}
+                      height={500}
                       src={nft.thumbnail || "/placeholder.svg"}
                       alt={nft.title}
                       className="w-full h-88 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    <div className="absolute top-2 right-2">
-                      <a href={`https://shannon-explorer.somnia.network/token/${nft.contract_address}/instance/${nft.id}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
-                        <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 text-white">
-                          <ExternalLink className="h-4 w-4" />
-                        </Button>
-                      </a>
-                    </div>
-                    {nft.verified && (
-                      <Badge className="absolute top-2 left-2 bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
-                        Verified
-                      </Badge>
-                    )}
+                  </Link>
+                  <div className="absolute top-2 right-2">
+                    <a href={`https://shannon-explorer.somnia.network/token/${nft.contract_address}/instance/${nft.id}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                      <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 text-white">
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                    </a>
                   </div>
-                </Link>
+                  {nft.verified && (
+                    <Badge className="absolute top-2 left-2 bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
+                      Verified
+                    </Badge>
+                  )}
+                </div>
 
                 <div className="p-4 space-y-3">
                   <Link href={`/nft/${nft.id}`}>

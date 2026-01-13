@@ -61,6 +61,7 @@ export const queryNftCollections = unstable_cache(async (provider = RPC_PROVIDER
     return collections.filter((collection): collection is NonNullable<typeof collection> => collection !== null) as NftCollection[];
 }, ["collections"], {
     revalidate: 60 * 5, // 5 minutes
+    tags: ["collections"],
 })
 
 export const queryNftCollection = (token_id: number, provider = RPC_PROVIDER) => unstable_cache(async () => {
